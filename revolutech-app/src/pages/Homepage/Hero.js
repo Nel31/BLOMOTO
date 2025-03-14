@@ -1,5 +1,5 @@
 import React from 'react';
-import heroImage from '../assets/2.jpeg';
+import heroImage from '../../assets/2.jpeg';
 
 function Hero() {
   const handleNavigation = (section) => {

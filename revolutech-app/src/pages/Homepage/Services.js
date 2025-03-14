@@ -1,5 +1,5 @@
 import React from 'react';
-import serviceImage from '../assets/1.png';
+import serviceImage from '../../assets/1.png';
 
 function Services() {
   const services = [
