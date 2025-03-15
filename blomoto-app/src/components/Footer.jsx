@@ -53,9 +53,9 @@ function Footer() {
                 <a href="mailto:info@revolutech.com" className="hover:text-white">info@revolutech.com</a>
               </li>
               <li className="text-gray-400">
-                <a href="tel:+33123456789" className="hover:text-white">+33 1 23 45 67 89</a>
+                <a href="tel:+33123456789" className="hover:text-white">+229 0159599988</a>
               </li>
-              <li className="text-gray-400">123 Avenue de l'Innovation, 75000 Paris</li>
+              <li className="text-gray-400">Fidjrossè</li>
             </ul>
           </div>
         </div>

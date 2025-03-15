@@ -11,19 +11,19 @@ const slides = [
   {
     title: "Transformez votre entreprise avec la technologie",
     description: "Solutions innovantes pour accélérer votre croissance et optimiser vos processus d'affaires.",
-    image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=2070&q=80",
+    image: "https://lanation.bj/storage/assets/2025/01/G4ouxnqNhvHs4UhE_At%C3%A9lier_Garage_Cfao-Ganhi.JPG.webp",
     buttonText: "Découvrir nos services"
   },
   {
     title: "Des solutions sur mesure pour votre succès",
     description: "Expertise technique et accompagnement personnalisé pour répondre à vos besoins spécifiques.",
-    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=2070&q=80",
+    image: "https://static.wixstatic.com/media/0fc404_673e9757ce364d2e8cf9f7677dd44533~mv2.png/v1/fill/w_640,h_480,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/0fc404_673e9757ce364d2e8cf9f7677dd44533~mv2.png",
     buttonText: "En savoir plus"
   },
   {
     title: "Innovation et performance au cœur de nos services",
     description: "Technologies de pointe et méthodologies agiles pour des résultats concrets.",
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=2070&q=80",
+    image: "https://www.ads77.fr/ressources/images/68ceb099ded9.jpg",
     buttonText: "Commencer maintenant"
   }
 ];

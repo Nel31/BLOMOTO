@@ -47,7 +47,7 @@ function ServicesList() {
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center text-[#00C2CB] mb-4">Services</h1>
+        <h1 className="text-3xl font-bold text-center text-[#0000FF] mb-4">Services</h1>
         
         <p className="text-center text-gray-600 mb-8">
           Avec Blo moto, localise des garages pros près de chez toi, découvre des services adaptés et profite de tarifs transparents.
@@ -63,7 +63,7 @@ function ServicesList() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#00C2CB] text-white px-6 py-2 rounded-lg">
+              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#0000FF] text-white px-6 py-2 rounded-lg">
                 Rechercher
               </button>
             </div>
@@ -83,7 +83,7 @@ function ServicesList() {
                 <p className="text-gray-600 mb-4">{service.description}</p>
                 <button
                   onClick={() => handleServiceClick(service.id)}
-                  className="bg-[#00C2CB] text-white px-6 py-2 rounded-lg w-full hover:bg-[#00a9b1] transition-colors"
+                  className="bg-[#0000FF] text-white px-6 py-2 rounded-lg w-full hover:bg-[#0000FF] transition-colors"
                 >
                   Voir les garages
                 </button>
