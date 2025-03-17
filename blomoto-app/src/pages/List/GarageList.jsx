@@ -74,3 +74,62 @@ function GarageList() {
 }
 
 export default GarageList;
+/*
+import { useState, useEffect } from "react";
+
+export default function GarageRecommendations() {
+  const [garages, setGarages] = useState([]);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/garages/")
+      .then((response) => response.json())
+      .then((data) => setGarages(data))
+      .catch((error) => console.error("Error fetching garages:", error));
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-100 text-gray-800">
+      <header className="bg-blue-500 text-white p-4 flex justify-between items-center">
+        <h1 className="text-lg font-bold">Blo moto</h1>
+        <button className="text-white">☰</button>
+      </header>
+
+      <div className="p-4">
+        <input
+          type="text"
+          placeholder="Trouver un garage spécialisé"
+          className="w-full p-2 border rounded-md"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className="flex gap-2 mt-2">
+          <button className="bg-blue-500 text-white px-4 py-1 rounded">Réparations</button>
+          <button className="bg-blue-500 text-white px-4 py-1 rounded">Mécanique</button>
+          <button className="bg-blue-500 text-white px-4 py-1 rounded">Auto</button>
+        </div>
+      </div>
+
+      <div className="p-4">
+        <h2 className="text-xl font-bold">Nos recommandations</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          {garages
+            .filter((g) => g.name.toLowerCase().includes(search.toLowerCase()))
+            .map((garage, index) => (
+              <div key={index} className="bg-white p-4 rounded shadow">
+                <h3 className="text-lg font-bold">{garage.name}</h3>
+                <p>{garage.address}</p>
+                <p className="text-sm text-gray-600">{garage.city}</p>
+                <button className="mt-2 bg-blue-500 text-white px-3 py-1 rounded">Voir plus</button>
+              </div>
+            ))}
+        </div>
+      </div>
+
+      <footer className="bg-blue-500 text-white text-center p-4 mt-6">
+        <p>Contact : +29 01 87 22222</p>
+        <p>mail@globmoto.com - Québec, Canada</p>
+        <p className="text-sm">Copyright ©2025 Blo moto. Tous droits réservés.</p>
+      </footer>
+    </div>
+  );
+}*/

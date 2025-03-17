@@ -7,6 +7,7 @@ import About from './pages/About';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ServicesList from './pages/Services/ServiceList';
+import Login from './pages/Login';
 
 function App() {
   // Définition des couleurs principales pour le thème du site
@@ -25,6 +26,7 @@ function App() {
           <Route path="/garage-list" element={<GarageList />} />
           <Route path="/garage-cards" element={<GarageCards />} />
           <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
         <Footer />
       </div>
