@@ -21,6 +21,7 @@ function Header() {
               <li><Link to="/garage-list" className="font-medium text-gray-600 hover:text-primary cursor-pointer">Garages</Link></li>
               <li><Link to="/about" className="font-medium text-gray-600 hover:text-primary cursor-pointer">À propos</Link></li>
               <li><Link to="/contact" className="font-medium text-gray-600 hover:text-primary cursor-pointer">Contact</Link></li>
+              <li><Link to="/login" className="font-medium text-gray-600 hover:text-primary cursor-pointer">Login</Link></li>
             </ul>
           </nav>
 
