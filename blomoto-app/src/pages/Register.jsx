@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -78,7 +79,7 @@ const Register = () => {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg mt-4 hover:bg-blue-700 transition"
-          >
+          > 
             S'inscrire
           </button>
         </form>
