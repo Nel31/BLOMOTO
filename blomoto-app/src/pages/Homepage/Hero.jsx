@@ -10,19 +10,19 @@ import 'swiper/css/effect-fade';
 const slides = [
   {
     title: "De la qualité! BLOMOTO",
-    description: "Solutions innovantes pour accélérer votre croissance et optimiser vos processus d'affaires.",
+    description: "Avec BLOMOTO, l’exigence devient la norme, et la qualité, une promesse tenue.",
     image: "https://lanation.bj/storage/assets/2025/01/G4ouxnqNhvHs4UhE_At%C3%A9lier_Garage_Cfao-Ganhi.JPG.webp",
     buttonText: "Découvrir nos services"
   },
   {
     title: "Avec BLOMOTO votre mécanicien est trouvé",
-    description: "Expertise technique et accompagnement personnalisé pour répondre à vos besoins spécifiques.",
+    description: "Fini le stress des pannes imprévues ! Avec BLOMOTO, trouvez rapidement un mécanicien de confiance, où que vous soyez.",
     image: "https://static.wixstatic.com/media/0fc404_673e9757ce364d2e8cf9f7677dd44533~mv2.png/v1/fill/w_640,h_480,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/0fc404_673e9757ce364d2e8cf9f7677dd44533~mv2.png",
     buttonText: "En savoir plus"
   },
   {
     title: "Prennez votre rendez-vous avec BLOMOTO",
-    description: "Technologies de pointe et méthodologies agiles pour des résultats concrets.",
+    description: "Besoin d’un entretien ou d’une réparation ? Avec BLOMOTO, réservez votre rendez-vous en quelques clics et trouvez un mécanicien qualifié près de chez vous",
     image: "https://www.ads77.fr/ressources/images/68ceb099ded9.jpg",
     buttonText: "Commencer maintenant"
   }
