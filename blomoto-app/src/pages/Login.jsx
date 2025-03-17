@@ -4,6 +4,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -55,13 +56,16 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-4 text-center">
-          <p className="text-gray-600">
-            Pas encore de compte ?{" "}
-            <a href="/register" className="text-blue-500 hover:underline">
-              Inscrivez-vous
-            </a>
-          </p>
+        <div className="mt-4 text-center">
+          <p className="text-gray-600">
+            Pas encore de compte ?{" "}
+            <button
+              onClick={() => navigate("/register")}
+              className="text-blue-500 hover:underline"
+            >
+              Inscrivez-vous
+            </button>
+          </p>
         </div>
       </div>
     </div>
