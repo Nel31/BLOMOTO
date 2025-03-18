@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,6 +27,15 @@ const Login = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md bg-opacity-90">
         <h2 className="text-2xl font-bold text-center text-blue-600">Connexion</h2>
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+
+        <button className="w-full bg-gray-100 text-black py-2 rounded-lg mt-2 hover:bg-gray-200 transition flex items-center justify-center gap-2">
+          <FcGoogle className="w-6 h-6" />
+          S'inscrire avec Google
+        </button>
+        <button className="w-full bg-blue-800 text-white py-2 rounded-lg mt-2 hover:bg-blue-900 transition flex items-center justify-center gap-2">
+          <FaFacebook className="w-6 h-6" />
+          S'inscrire avec Facebook
+        </button>
 
         <form onSubmit={handleLogin} className="mt-4">
           <div>
