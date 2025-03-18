@@ -70,7 +70,7 @@ function Hero() {
                           {slide.description}
                         </p>
                         <button
-                            onClick={() => navigate('/services')}
+                            onClick={() => navigate('/service-list')}
                             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-md text-lg font-medium transition-all duration-300 transform hover:scale-105 animate-fade-in-delay-2"
                         >
                           {slide.buttonText}
