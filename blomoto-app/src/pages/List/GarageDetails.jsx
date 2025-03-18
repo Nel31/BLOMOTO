@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FaUserCircle } from "react-icons/fa";
+import React, { useState } from 'react';
+import { Calendar, Clock, MapPin, Phone, Star, PenTool as Tool, User, MessageSquare, ChevronLeft } from 'lucide-react';
 
 function GarageDetails({ garage, onClose }) {
   if (!garage) return null;
@@ -23,114 +23,184 @@ function GarageDetails({ garage, onClose }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-gray-100 p-6">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-6xl">
-        {/* Image du garage */}
-        <div className="relative w-full h-80 mb-6">
-          <img
-            src={garage.image}
-            alt={garage.name}
-            className="w-full h-full object-cover rounded-md shadow-lg"
-          />
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+          <div className="relative h-96">
+            <img
+              src={garage.image}
+              alt={garage.name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
+              <div className="p-8 w-full">
+                <h1 className="text-4xl font-bold text-white mb-2">{garage.name}</h1>
+                <div className="flex items-center space-x-4 text-white">
+                  <div className="flex items-center">
+                    <MapPin className="w-5 h-5 mr-2" />
+                    <span>{garage.address}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Phone className="w-5 h-5 mr-2" />
+                    <span>{garage.contact || "Non disponible"}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Star className="w-5 h-5 mr-2 text-yellow-400" />
+                    <span>{garage.rating}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    {/*<p className="text-gray-600 mt-2 text-center"><strong>📍 Adresse:</strong> {garage.address}</p>
-    <p className="text-gray-600 mt-1 text-center"><strong>📞 Contact:</strong> {garage.contact || "Non disponible"}</p>
-    <p className="text-gray-600 mt-1 text-center"><strong>⭐ Note:</strong> {garage.rating} ★</p> */}
 
-    {/* Services */}
-    <h3 className="text-2xl font-semibold mt-6">🔧 Services:</h3>
-    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-      {garage.services.map((service, index) => (
-        <li key={index} className="bg-gray-200 p-4 rounded-md text-center">{service}</li>
-      ))}
-    </ul>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Services Section */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h2 className="text-2xl font-semibold mb-6 flex items-center">
+                <Tool className="w-6 h-6 mr-2 text-blue-600" />
+                Services disponibles
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {garage.services.map((service, index) => (
+                  <div
+                    key={index}
+                    className="p-4 rounded-lg bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors"
+                  >
+                    <span className="font-medium text-blue-900">{service}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-    {/* Avis */}
-    <h3 className="text-2xl font-semibold mt-6">🗣️ Avis des clients:</h3>
-    <div className="mt-4 space-y-4">
-      <div className="flex items-center gap-4 p-4 bg-gray-100 rounded-md shadow">
-        <FaUserCircle className="w-12 h-12 text-gray-400" />
-        <div>
-          <p className="font-semibold">Jean Dupont</p>
-          <p className="text-yellow-500">★★★★☆</p>
-          <p className="italic text-gray-600">"Excellent service et accueil chaleureux !"</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-4 p-4 bg-gray-100 rounded-md shadow">
-        <FaUserCircle className="w-12 h-12 text-gray-400" />
-        <div>
-          <p className="font-semibold">Marie Curie</p>
-          <p className="text-yellow-500">★★★★★</p>
-          <p className="italic text-gray-600">"Rapide et efficace, je recommande vivement !"</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-4 p-4 bg-gray-100 rounded-md shadow">
-        <FaUserCircle className="w-12 h-12 text-gray-400" />
-        <div>
-          <p className="font-semibold">Albert Einstein</p>
-          <p className="text-yellow-500">★★★☆☆</p>
-          <p className="italic text-gray-600">"Bon travail mais un peu d'attente."</p>
+            {/* Reviews Section */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h2 className="text-2xl font-semibold mb-6 flex items-center">
+                <MessageSquare className="w-6 h-6 mr-2 text-blue-600" />
+                Avis clients
+              </h2>
+              <div className="space-y-4">
+                {[
+                  { name: "Jean Dupont", rating: 4, comment: "Excellent service et accueil chaleureux !" },
+                  { name: "Marie Curie", rating: 5, comment: "Rapide et efficace, je recommande vivement !" },
+                  { name: "Albert Einstein", rating: 3, comment: "Bon travail mais un peu d'attente." }
+                ].map((review, index) => (
+                  <div key={index} className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center">
+                        <User className="w-10 h-10 text-gray-400 mr-3" />
+                        <span className="font-semibold">{review.name}</span>
+                      </div>
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-5 h-5 ${
+                              i < review.rating ? 'text-yellow-400' : 'text-gray-300'
+                            }`}
+                            fill={i < review.rating ? 'currentColor' : 'none'}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-gray-600 italic">{review.comment}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Appointment Form */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
+              <h2 className="text-2xl font-semibold mb-6 flex items-center">
+                <Calendar className="w-6 h-6 mr-2 text-blue-600" />
+                Prendre rendez-vous
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nom complet
+                  </label>
+                  <input
+                    type="text"
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Votre nom"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Téléphone
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Votre numéro"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date du rendez-vous
+                  </label>
+                  <input
+                    type="date"
+                    value={appointmentDate}
+                    onChange={(e) => setAppointmentDate(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Service souhaité
+                  </label>
+                  <select
+                    value={selectedService}
+                    onChange={(e) => setSelectedService(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    <option value="">Sélectionnez un service</option>
+                    {garage.services.map((service, index) => (
+                      <option key={index} value={service}>{service}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center"
+                >
+                  <Clock className="w-5 h-5 mr-2" />
+                  Confirmer le rendez-vous
+                </button>
+              </form>
+
+              <button
+                onClick={onClose}
+                className="mt-4 w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center justify-center"
+              >
+                <ChevronLeft className="w-5 h-5 mr-2" />
+                Retour
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    {/* 📝 Formulaire de prise de rendez-vous */}
-    <h3 className="text-2xl font-semibold mt-6">📅 Prendre un rendez-vous :</h3>
-    <form className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Votre nom"
-        value={clientName}
-        onChange={(e) => setClientName(e.target.value)}
-        className="p-3 border border-gray-300 rounded-md w-full"
-        required
-      />
-      <input
-        type="tel"
-        placeholder="Votre téléphone"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        className="p-3 border border-gray-300 rounded-md w-full"
-        required
-      />
-      <input
-        type="date"
-        value={appointmentDate}
-        onChange={(e) => setAppointmentDate(e.target.value)}
-        className="p-3 border border-gray-300 rounded-md w-full"
-        required
-      />
-      <select
-        value={selectedService}
-        onChange={(e) => setSelectedService(e.target.value)}
-        className="p-3 border border-gray-300 rounded-md w-full bg-white"
-        required
-      >
-        <option value="">Choisissez un service</option>
-        {garage.services.map((service, index) => (
-          <option key={index} value={service}>{service}</option>
-        ))}
-      </select>
-      <button
-        type="submit"
-        className="col-span-1 md:col-span-2 bg-green-600 text-white px-4 py-3 rounded-md hover:bg-green-700 transition w-full"
-      >
-        Confirmer le rendez-vous
-      </button>
-    </form>
-
-    {/* Bouton de retour */}
-    <div className="mt-6 text-center">
-      <button
-        className="bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition w-full md:w-auto"
-        onClick={onClose}
-      >
-        Retour
-      </button>
-    </div>
-  </div>
-</div>
-);
+  );
 }
 
-export default GarageDetails
+export default GarageDetails;
