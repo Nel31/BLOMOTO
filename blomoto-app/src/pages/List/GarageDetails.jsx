@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, Phone, Star, PenTool as Tool, User, MessageSquare, ChevronLeft } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Star, PenTool as Tool, User, MessageSquare, ChevronLeft, Home } from 'lucide-react';
 
 function GarageDetails({ garage, onClose }) {
   if (!garage) return null;
@@ -8,6 +8,7 @@ function GarageDetails({ garage, onClose }) {
   const [phone, setPhone] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [issueDescription, setIssueDescription] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,16 +16,34 @@ function GarageDetails({ garage, onClose }) {
       alert("Veuillez remplir tous les champs !");
       return;
     }
-    alert(`Rendez-vous pris pour ${clientName} le ${appointmentDate} pour le service ${selectedService}`);
+    
+    let confirmationMessage = `Rendez-vous pris pour ${clientName} le ${appointmentDate} pour le service ${selectedService}`;
+    if (issueDescription) {
+      confirmationMessage += `\nDescription de la panne: ${issueDescription}`;
+    }
+    
+    alert(confirmationMessage);
     setClientName("");
     setPhone("");
     setAppointmentDate("");
     setSelectedService("");
+    setIssueDescription("");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+        {/* Navigation Header */}
+        <div className="mb-6 flex items-center">
+          <button 
+            onClick={onClose} 
+            className="text-blue-600 hover:text-blue-800 flex items-center font-medium"
+          >
+            <Home className="w-5 h-5 mr-2" />
+            Garages
+          </button>
+        </div>
+        
         {/* Header Section */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
           <div className="relative h-96">
@@ -177,6 +196,19 @@ function GarageDetails({ garage, onClose }) {
                       <option key={index} value={service}>{service}</option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    Description de la panne <span className="text-xs text-gray-500 ml-2">(facultatif)</span>
+                  </label>
+                  <textarea
+                    value={issueDescription}
+                    onChange={(e) => setIssueDescription(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Décrivez votre problème..."
+                    rows="3"
+                  />
                 </div>
 
                 <button
