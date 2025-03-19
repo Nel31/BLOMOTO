@@ -9,7 +9,8 @@ import Footer from './components/Footer';
 import ServicesList from './pages/Services/ServiceList';
 import Register from './pages/Register';
 import Login from './pages/Login';
-
+import GarageDetails from './pages/List/GarageDetails';
+import GarageDashboard from './pages/List/GarageDashboard';
 
 function App() {
   // Définition des couleurs principales pour le thème du site
@@ -30,6 +31,8 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/garage/:id" element={<GarageDetails />} />
+          <Route path="/garage/:id/dashboard" element={<GarageDashboard />} />
         </Routes>
         <Footer />
       </div>
