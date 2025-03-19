@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/4.png';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,7 +10,7 @@ function Header() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link to="/">
-              <span className="text-2xl font-bold text-primary">BLOMOTO</span>
+            <img src={logo} alt="Logo" className="h-14 w-auto" />
             </Link>
           </div>
 
