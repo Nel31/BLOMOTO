@@ -21,39 +21,38 @@ const Login = () => {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-gray-100"
       style={{ backgroundImage: "url('/2.jpeg')" }}
     >
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md bg-opacity-90">
-        <h2 className="text-2xl font-bold text-center text-blue-600">Connexion</h2>
-        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-sm bg-white/90 transform hover:scale-[1.01] transition-transform">
+        <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">Connexion</h2>
+        {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
+            <p>{error}</p>
+          </div>
+        )}
 
-        <button className="w-full bg-gray-100 text-black py-2 rounded-lg mt-2 hover:bg-gray-200 transition flex items-center justify-center gap-2">
-          <FcGoogle className="w-6 h-6" />
-          S'inscrire avec Google
-        </button>
-        <button className="w-full bg-blue-800 text-white py-2 rounded-lg mt-2 hover:bg-blue-900 transition flex items-center justify-center gap-2">
-          <FaFacebook className="w-6 h-6" />
-          S'inscrire avec Facebook
-        </button>
-
-        <form onSubmit={handleLogin} className="mt-4">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-gray-700 text-sm font-semibold mb-2">
+              Email
+            </label>
             <input
               type="email"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
               placeholder="Votre email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
-          <div className="mt-4">
-            <label className="block text-gray-700">Mot de passe</label>
+          <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-2">
+              Mot de passe
+            </label>
             <input
               type="password"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
               placeholder="Votre mot de passe"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -62,36 +61,53 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg mt-4 hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transform hover:scale-[1.02] transition-all duration-200 font-semibold"
           >
             Se connecter
           </button>
-        </form>
 
-        <div className="mt-4 text-center">
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Ou continuer avec</span>
+            </div>
+          </div>
 
-          <p className="text-gray-600">
-
-            Pas encore de compte ?{" "}
-
+          <div className="space-y-3">
             <button
-
-              onClick={() => navigate("/register")}
-
-              className="text-blue-500 hover:underline"
-
+              type="button"
+              className="w-full bg-white text-gray-700 py-3 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-3 font-medium"
             >
-
-              Inscrivez-vous
-
+              <FcGoogle className="w-5 h-5" />
+              Continuer avec Google
             </button>
 
-          </p>
+            <button
+              type="button"
+              className="w-full bg-[#1877F2] text-white py-3 px-4 rounded-lg hover:bg-[#1865F2] transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-3 font-medium"
+            >
+              <FaFacebook className="w-5 h-5" />
+              Continuer avec Facebook
+            </button>
+          </div>
+        </form>
 
+        <div className="mt-8 text-center">
+          <p className="text-gray-600">
+            Pas encore de compte ?{" "}
+            <button
+              onClick={() => navigate("/register")}
+              className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-all"
+            >
+              Inscrivez-vous
+            </button>
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Login;
