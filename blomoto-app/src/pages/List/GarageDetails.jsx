@@ -200,7 +200,7 @@ function GarageDetails({ garage, onClose }) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                    Description de la panne <span className="text-xs text-gray-500 ml-2">(facultatif)</span>
+                    Description du service <span className="text-xs text-gray-500 ml-2">(facultatif)</span>
                   </label>
                   <textarea
                     value={issueDescription}
