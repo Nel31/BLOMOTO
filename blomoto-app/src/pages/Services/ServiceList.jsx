@@ -177,7 +177,7 @@ const services = [
 
 function ServicesList() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [visibleServices, setVisibleServices] = useState(6);
+  const [visibleServices, setVisibleServices] = useState(9);
   const [expandedView, setExpandedView] = useState(false);
   const [isReturningFromGarageList, setIsReturningFromGarageList] = useState(false);
   const navigate = useNavigate();
