@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/4.png';
+import logo from '../assets/5.png';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,12 +17,12 @@ function Header() {
           {/* Desktop Menu */}
           <nav className="hidden md:block">
             <ul className="flex space-x-8">
-              <li><Link to="/" className="font-medium text-primary cursor-pointer">Accueil</Link></li>
-              <li><Link to="/service-list" className="font-medium text-primary cursor-pointer">Services</Link></li>
-              <li><Link to="/garage-list" className="font-medium text-gray-600 hover:text-primary cursor-pointer">Garages</Link></li>
-              <li><Link to="/about" className="font-medium text-gray-600 hover:text-primary cursor-pointer">À propos</Link></li>
-              <li><Link to="/contact" className="font-medium text-gray-600 hover:text-primary cursor-pointer">Contact</Link></li>
-              <li><Link to="/login" className="font-medium text-gray-600 hover:text-primary cursor-pointer">Login</Link></li>
+              <li><Link to="/" className="font-medium text-xl text-gray-600 hover:text-primary cursor-pointer">Accueil</Link></li>
+              <li><Link to="/service-list" className="font-medium text-xl text-gray-600 hover:text-primary cursor-pointer">Services</Link></li>
+              <li><Link to="/garage-list" className="font-medium text-xl text-gray-600 hover:text-primary cursor-pointer">Garages</Link></li>
+              <li><Link to="/about" className="font-medium text-xl text-gray-600 hover:text-primary cursor-pointer">À propos</Link></li>
+              <li><Link to="/contact" className="font-medium text-xl text-gray-600 hover:text-primary cursor-pointer">Contact</Link></li>
+              <li><Link to="/login" className="font-medium text-xl text-gray-600 hover:text-primary cursor-pointer">Login</Link></li>
             </ul>
           </nav>
 
