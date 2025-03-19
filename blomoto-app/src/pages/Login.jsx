@@ -84,13 +84,6 @@ const Login = () => {
               Continuer avec Google
             </button>
 
-            <button
-              type="button"
-              className="w-full bg-[#1877F2] text-white py-3 px-4 rounded-lg hover:bg-[#1865F2] transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-3 font-medium"
-            >
-              <FaFacebook className="w-5 h-5" />
-              Continuer avec Facebook
-            </button>
           </div>
         </form>
 
@@ -110,4 +103,5 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login;
+

@@ -9,7 +9,7 @@ const About = () => {
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">À Propos de <span className="text-blue-300">REVOLUTECH</span></h1>
             <p className="text-xl md:text-2xl mb-8 font-light">
-              Révolutionner l'avenir de la technologie et de l'innovation.
+              Révolutionner l'avenir de la mécanique automobile au Bénin
             </p>
           </div>
         </div>
@@ -20,20 +20,27 @@ const About = () => {
         <div className="container mx-auto px-4 py-24">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <div className="fade-in-left">
-              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-800">Notre Histoire</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-800">Qui sommes-nous?</h2>
               <div className="space-y-6 text-lg text-gray-700">
                 <p>
-                  Fondée en 2020, <span className="font-semibold text-blue-700">REVOLUTECH</span> a débuté avec une mission simple : combler le fossé entre la technologie de pointe et les utilisateurs quotidiens. Nos fondateurs, passionnés de technologie avec des années d'expérience, ont reconnu le besoin de solutions innovantes à la fois puissantes et accessibles.
+                  Revolutech est né de la vision d'un groupe d'étudiants d'Epitech, réunis dans le cadre de notre projet de fin d'études (EIP – Innovation & Entrepreneuriat). Face aux nombreux défis auxquels notre pays, le Bénin, est confronté, nous avons décidé d'apporter une solution technologique concrète à un secteur essentiel mais souvent négligé : la mécanique automobile.
                 </p>
                 <p>
-                  Ce qui a commencé comme une petite startup s'est transformé en une entreprise dynamique à l'avant-garde de l'innovation technologique, avec une équipe de professionnels dévoués qui s'engagent à repousser les limites et à créer un changement significatif.
+                  Nous avons constaté que de nombreux automobilistes rencontrent des difficultés pour accéder à des services de réparation fiables, rapides et transparents. De plus, les mécaniciens manquent souvent de visibilité et de ressources pour optimiser leur activité. C'est ainsi qu'est née notre initiative : créer une plateforme innovante qui connecte les propriétaires de véhicules aux professionnels de la mécanique, tout en intégrant des outils intelligents pour améliorer l'efficacité du secteur.
+                </p>
+                <p className="font-semibold text-blue-700">
+                  Notre ambition est simple : révolutionner l'accès aux services de réparation automobile grâce à la technologie.
                 </p>
               </div>
             </div>
             <div className="about-image fade-in-right">
               <div className="relative">
                 <div className="absolute -inset-4 bg-blue-600 rounded-lg transform rotate-3"></div>
-                <img src="/api/placeholder/600/400" alt="Équipe REVOLUTECH" className="rounded-lg shadow-lg relative z-10" />
+                <img 
+                  src="https://images.unsplash.com/photo-1632823551722-5df4aa24a1d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+                  alt="Équipe REVOLUTECH" 
+                  className="rounded-lg shadow-lg relative z-10 w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
@@ -47,39 +54,49 @@ const About = () => {
             <span className="inline-block px-4 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-4">NOTRE VISION</span>
             <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-800">Notre Mission</h2>
             <p className="text-lg md:text-xl mb-12 text-gray-700">
-              Chez REVOLUTECH, nous nous engageons à développer des technologies qui permettent aux individus et aux organisations d'atteindre leur plein potentiel. Nous croyons que l'innovation devrait être accessible à tous, et nous travaillons sans relâche pour créer des solutions à la fois puissantes et conviviales.
+              Chez Revolutech, notre mission est d'améliorer l'expérience de la mécanique automobile grâce à une solution digitale accessible et efficace.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
             <div className="mission-card p-8 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300 bg-white">
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">Innovation</h3>
-              <p className="text-gray-600">Repousser constamment les limites et explorer de nouvelles possibilités technologiques.</p>
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Faciliter l'accès</h3>
+              <p className="text-gray-600">Mettre en relation les automobilistes avec des mécaniciens qualifiés proches de chez eux.</p>
             </div>
             
             <div className="mission-card p-8 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300 bg-white">
               <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">Accessibilité</h3>
-              <p className="text-gray-600">Rendre la technologie avancée accessible et utilisable par tous.</p>
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Optimiser la gestion</h3>
+              <p className="text-gray-600">Fournir des outils technologiques pour une meilleure gestion des clients, stocks et interventions.</p>
             </div>
             
             <div className="mission-card p-8 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300 bg-white">
               <div className="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">Durabilité</h3>
-              <p className="text-gray-600">Créer des solutions qui sont non seulement efficaces mais aussi respectueuses de l'environnement.</p>
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Renforcer la confiance</h3>
+              <p className="text-gray-600">Assurer la transparence grâce aux évaluations, devis clairs et suivi en temps réel.</p>
+            </div>
+
+            <div className="mission-card p-8 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300 bg-white">
+              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Encourager l'innovation</h3>
+              <p className="text-gray-600">Intégrer des fonctionnalités avancées comme le diagnostic à distance et la gestion numérique.</p>
             </div>
           </div>
         </div>
@@ -101,7 +118,7 @@ const About = () => {
               <div key={index} className="team-member group">
                 <div className="relative overflow-hidden rounded-xl mb-6">
                   <img 
-                    src={`/api/placeholder/300/300`} 
+                    src={`https://source.unsplash.com/random/300x300?portrait&${index}`}
                     alt={member.name} 
                     className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" 
                   />
@@ -132,18 +149,10 @@ const About = () => {
       <section className="contact-section bg-gradient-to-r from-blue-600 to-indigo-800 text-white">
         <div className="container mx-auto px-4 py-24">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Prêt à Révolutionner Votre Technologie?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Prêt à Révolutionner la Mécanique Automobile?</h2>
             <p className="text-lg md:text-xl mb-12 opacity-90">
-              Vous avez des questions ou souhaitez en savoir plus sur nos solutions? Notre équipe d'experts est là pour vous aider à transformer vos idées en réalité.
+              Rejoignez-nous dans notre mission de transformer le secteur automobile au Bénin. Ensemble, construisons une mécanique plus accessible, plus efficace et plus transparente.
             </p>
-            {/* <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-blue-700 hover:bg-blue-100 font-bold py-4 px-8 rounded-lg transition duration-300 shadow-lg">
-                Nous Contacter
-              </button>
-              <button className="bg-transparent hover:bg-blue-700 border-2 border-white text-white font-bold py-4 px-8 rounded-lg transition duration-300">
-                En Savoir Plus
-              </button>
-            </div> */}
           </div>
         </div>
       </section>
