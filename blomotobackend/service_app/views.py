@@ -2,6 +2,8 @@ from rest_framework import generics
 from django.shortcuts import render
 from .models import Service
 from .serializers import ServiceSerializer
+from garage_app.serializers import GarageSerializer
+from garage_app.models import Garage
 
 class ServiceCreateView(generics.CreateAPIView):
     queryset = Service.objects.all()
@@ -22,3 +24,4 @@ class ServiceUpdateView(generics.UpdateAPIView):
 class ServiceDeleteView(generics.RetrieveDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
+

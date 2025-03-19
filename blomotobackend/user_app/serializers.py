@@ -12,7 +12,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class AvisSerializer(serializers.ModelSerializer):
     class Meta:
         model = Avis
-        fields = ['user', 'garage', 'rating', 'comment', 'created_at']
+        fields = ['user', 'garage', 'rating', 'comment']
 
 
 class RendezVousSerializer(serializers.ModelSerializer):
