@@ -1,5 +1,6 @@
 {
-  "name": "vite-react-starter",
+  "name": "blomoto",
+  "proxy": "http://127.0.0.1:8000",
   "private": true,
   "version": "0.0.0",
   "type": "module",
