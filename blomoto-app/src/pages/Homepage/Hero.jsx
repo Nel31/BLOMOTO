@@ -17,7 +17,7 @@ const slides = [
   {
     title: "Avec BLOMOTO votre mécanicien est trouvé",
     description: "Fini le stress des pannes imprévues ! Avec BLOMOTO, trouvez rapidement un mécanicien de confiance, où que vous soyez.",
-    image: "https://static.wixstatic.com/media/0fc404_673e9757ce364d2e8cf9f7677dd44533~mv2.png/v1/fill/w_640,h_480,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/0fc404_673e9757ce364d2e8cf9f7677dd44533~mv2.png",
+    image: "https://i0.wp.com/valorisation-commerce.com/wp-content/uploads/2021/02/garage.jpg?fit=1920%2C1280&ssl=1",
     buttonText: "En savoir plus"
   },
   {
