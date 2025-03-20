@@ -19,18 +19,38 @@ function GarageDashboard() {
         issueDescription: "Bruit suspect au niveau du moteur. Le bruit est plus prononcé lors des accélérations et semble venir de l'avant du véhicule. J'ai aussi remarqué des vibrations inhabituelles au niveau du volant.",
         status: "completed",
         createdAt: "2024-03-15T10:30:00Z",
-        clientFeedback: "Très satisfait du service. Le bruit a complètement disparu et la voiture roule beaucoup mieux maintenant.",
         rating: 5
       },
       {
         id: 2,
+        clientName: "Marie Dupont",
+        phone: "+33 6 23 45 67 89",
+        appointmentDate: "2024-03-18",
+        selectedService: "Vidange",
+        issueDescription: "Vidange périodique à effectuer, le voyant s'est allumé.",
+        status: "completed",
+        createdAt: "2024-03-14T09:30:00Z",
+        rating: 4
+      },
+      {
+        id: 3,
         clientName: "Sophie Dubois",
         phone: "+33 6 98 76 54 32",
         appointmentDate: "2024-03-22",
         selectedService: "Changement de pneus",
         issueDescription: "Les pneus sont très usés, surtout à l'avant. J'ai remarqué une perte d'adhérence sous la pluie. Le véhicule a environ 45000 km.",
-        status: "confirmed",
+        status: "pending",
         createdAt: "2024-03-15T14:20:00Z"
+      },
+      {
+        id: 4,
+        clientName: "Pierre Durant",
+        phone: "+33 6 45 67 89 10",
+        appointmentDate: "2024-03-25",
+        selectedService: "Diagnostic électronique",
+        issueDescription: "Le voyant moteur s'allume de façon intermittente depuis quelques jours. Pas de perte de puissance notable.",
+        status: "pending",
+        createdAt: "2024-03-16T09:15:00Z"
       }
     ];
     setAppointments(mockAppointments);
@@ -41,6 +61,16 @@ function GarageDashboard() {
       prevAppointments.map(appointment =>
         appointment.id === appointmentId
           ? { ...appointment, status: action }
+          : appointment
+      )
+    );
+  };
+
+  const handleRatingSubmit = (appointmentId, rating) => {
+    setAppointments(prevAppointments =>
+      prevAppointments.map(appointment =>
+        appointment.id === appointmentId
+          ? { ...appointment, rating }
           : appointment
       )
     );
@@ -109,7 +139,7 @@ function GarageDashboard() {
             <div className="flex items-center">
               <ThumbsUp className="w-8 h-8 text-yellow-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Satisfaction Client</p>
+                <p className="text-sm font-medium text-gray-600">Note Moyenne</p>
                 <div className="flex items-center">
                   <p className="text-2xl font-semibold text-gray-900 mr-2">{averageRating}</p>
                   <div className="flex">
@@ -117,13 +147,16 @@ function GarageDashboard() {
                       <Star
                         key={index}
                         className={`w-4 h-4 ${
-                          index < Math.round(averageRating)
+                          index < Math.round(Number(averageRating))
                             ? 'text-yellow-400 fill-current'
                             : 'text-gray-300'
                         }`}
                       />
                     ))}
                   </div>
+                  <span className="ml-2 text-sm text-gray-500">
+                    ({completedAppointments.length} avis)
+                  </span>
                 </div>
               </div>
             </div>
@@ -175,23 +208,29 @@ function GarageDashboard() {
                         <p className="text-sm text-yellow-900">{appointment.issueDescription || "Aucune description fournie"}</p>
                       </div>
 
-                      {/* Client Post-Service Feedback */}
-                      {appointment.status === 'completed' && appointment.clientFeedback && (
+                      {/* Rating Section */}
+                      {appointment.status === 'completed' && (
                         <div className="mt-4 bg-green-50 rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-green-800">Retour client :</h3>
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-medium text-green-800">Note client :</h3>
                             <div className="flex items-center">
                               {[...Array(5)].map((_, index) => (
-                                <Star
+                                <button
                                   key={index}
-                                  className={`w-4 h-4 ${
-                                    index < appointment.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                                  }`}
-                                />
+                                  onClick={() => handleRatingSubmit(appointment.id, index + 1)}
+                                  className="focus:outline-none"
+                                >
+                                  <Star
+                                    className={`w-6 h-6 ${
+                                      index < (appointment.rating || 0)
+                                        ? 'text-yellow-400 fill-current'
+                                        : 'text-gray-300'
+                                    }`}
+                                  />
+                                </button>
                               ))}
                             </div>
                           </div>
-                          <p className="text-sm text-green-900">{appointment.clientFeedback}</p>
                         </div>
                       )}
                     </div>
