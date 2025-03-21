@@ -18,7 +18,7 @@ class CustomUser(AbstractUser):
 class Avis(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='avis')
     garage = models.ForeignKey(Garage, on_delete=models.CASCADE, related_name='avis')
-    rating = models.PositiveIntegerField(choices=[(1, '1 étoile'), (2, '2 étoiles'), (3, '3 étoiles'), (4, '4 étoiles'), (5, '5 étoiles')])
+    rating = rating = models.DecimalField(max_digits=3, decimal_places=1)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
