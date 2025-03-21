@@ -21,7 +21,7 @@ function Header() {
         <div className="container mx-auto px-4 py-2">
           <div className="flex justify-between items-center">
             <div className="flex space-x-6">
-              <a href="tel:+22921324889" className="flex items-center space-x-2 text-sm hover:text-blue-200">
+              <a href="tel:+22959599988" className="flex items-center space-x-2 text-sm hover:text-blue-200">
                 <Phone size={16} />
                 <span>+229 59599988</span>
               </a>

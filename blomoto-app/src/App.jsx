@@ -11,6 +11,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import GarageDetails from './pages/List/GarageDetails';
 import GarageDashboard from './pages/List/GarageDashboard';
+import { Contact } from './pages/Contact';
 
 function App() {
   // Définition des couleurs principales pour le thème du site
@@ -29,6 +30,7 @@ function App() {
           <Route path="/garage-list" element={<GarageList />} />
           <Route path="/garage-cards" element={<GarageCards />} />
           <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/garage/:id" element={<GarageDetails />} />
