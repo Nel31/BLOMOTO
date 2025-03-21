@@ -6,7 +6,7 @@ from service_app.models import Service
 class CustomUser(AbstractUser):
     birth_date = models.DateField(null=True, blank=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='blomoto_profiles/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='users_pictures/', blank=True, null=True)
 
     def __str__(self):
         return self.username

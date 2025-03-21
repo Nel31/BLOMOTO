@@ -6,6 +6,7 @@ class Garage(models.Model):
     address = models.CharField(max_length=200, blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     service = models.ManyToManyField(Service, related_name="service", blank=True)
+    garage_picture = models.ImageField(upload_to="garages_pictures/", blank=True, null=True)
 
     class Meta:
         verbose_name = "Garage"

@@ -2,6 +2,7 @@ from django.db import models
 
 class Service(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
+    service_picture = models.ImageField(upload_to='services_pictures/', blank=True, null=True)
     
     class Meta:
         verbose_name = "Service"
