@@ -2,6 +2,7 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
 import { useNavigate } from 'react-router-dom';
+import slide1 from '../../assets/1.png'
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -11,7 +12,7 @@ const slides = [
   {
     title: "De la qualité! BLOMOTO",
     description: "Avec BLOMOTO, l’exigence devient la norme, et la qualité, une promesse tenue.",
-    image: "https://lanation.bj/storage/assets/2025/01/G4ouxnqNhvHs4UhE_At%C3%A9lier_Garage_Cfao-Ganhi.JPG.webp",
+    image: slide1,
     buttonText: "Découvrir nos services"
   },
   {
