@@ -9,15 +9,38 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       setError("Veuillez remplir tous les champs.");
       return;
     }
-    console.log("Connexion avec :", email, password);
-    setError("");
+  
+    try {
+      const response = await fetch("http://localhost:8000/user_app/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("refresh_token", data.refresh_token);
+        console.log("Connexion réussie :", data);
+        navigate("/dashboard");
+      } else {
+        setError(data.error || "Erreur lors de la connexion.");
+      }
+    } catch (error) {
+      setError("Problème de connexion au serveur.");
+      console.error("Erreur:", error);
+    }
   };
+  
 
   return (
     <div

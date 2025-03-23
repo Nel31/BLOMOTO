@@ -15,10 +15,10 @@ class CustomUserRegisterView(generics.CreateAPIView):
 
 class CustomUserLoginView(APIView):
     def post(self, request):
-        username = request.data.get("username")
+        email = request.data.get("email")
         password = request.data.get("password")
         
-        user = authenticate(username=username, password=password)
+        user = authenticate(username=email, password=password)
         if user is not None:
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)

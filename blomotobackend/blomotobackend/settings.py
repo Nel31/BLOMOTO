@@ -76,6 +76,8 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+AUTHENTICATION_BACKENDS = ['user_app.authentication.EmailOrUsernameAuthBackend']
+
 ROOT_URLCONF = 'blomotobackend.urls'
 
 TEMPLATES = [
