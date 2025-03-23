@@ -74,7 +74,11 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # L'URL de votre application React
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 AUTHENTICATION_BACKENDS = ['user_app.authentication.EmailOrUsernameAuthBackend']
 
