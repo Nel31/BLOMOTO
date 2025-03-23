@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -31,7 +30,7 @@ const Login = () => {
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
         console.log("Connexion réussie :", data);
-        navigate("/dashboard");
+        navigate("/"); // Redirection vers la page d'accueil au lieu de /dashboard
       } else {
         setError(data.error || "Erreur lors de la connexion.");
       }
@@ -41,7 +40,6 @@ const Login = () => {
     }
   };
   
-
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-cover bg-center bg-gray-100"
@@ -106,7 +104,6 @@ const Login = () => {
               <FcGoogle className="w-5 h-5" />
               Continuer avec Google
             </button>
-
           </div>
         </form>
 
@@ -127,4 +124,3 @@ const Login = () => {
 };
 
 export default Login;
-

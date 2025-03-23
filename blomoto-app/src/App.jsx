@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import GarageDetails from './pages/List/GarageDetails';
 import GarageDashboard from './pages/List/GarageDashboard';
 import { Contact } from './pages/Contact';
+import Profile from './components/Profile';
 
 function App() {
   // Définition des couleurs principales pour le thème du site
@@ -35,6 +36,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/garage/:id" element={<GarageDetails />} />
           <Route path="/garage/:id/dashboard" element={<GarageDashboard />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
         <Footer />
       </div>

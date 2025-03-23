@@ -1,4 +1,4 @@
-#!/home/seneque/Téléchargements/BLOMOTO/blomotobackend/env/bin/python
+#!/home/assouma/BLOMOTO/blomotobackend/env/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
