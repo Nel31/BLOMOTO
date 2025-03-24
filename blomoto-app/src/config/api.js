@@ -1,6 +1,7 @@
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 export const API_ENDPOINTS = {
+  BASE_URL: API_BASE_URL,
   SERVICES: `${API_BASE_URL}/service_app/services/`,
   GARAGES: `${API_BASE_URL}/garage_app/garages/`,
   USERS: `${API_BASE_URL}/user_app/users/`,

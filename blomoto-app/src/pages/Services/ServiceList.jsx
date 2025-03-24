@@ -14,6 +14,12 @@ function ServicesList() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "https://via.placeholder.com/400x300?text=Service";
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${API_ENDPOINTS.BASE_URL}${imagePath}`;
+  };
+
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -90,7 +96,7 @@ function ServicesList() {
               >
                 <div className="relative h-48">
                   <img
-                      src={service.service_picture || "https://via.placeholder.com/400x300?text=Service"}
+                      src={getImageUrl(service.service_picture)}
                       alt={service.name}
                       className="w-full h-full object-cover"
                   />
@@ -131,7 +137,7 @@ function ServicesList() {
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3 lg:w-1/4">
                     <img
-                        src={service.service_picture || "https://via.placeholder.com/400x300?text=Service"}
+                        src={getImageUrl(service.service_picture)}
                         alt={service.name}
                         className="w-full h-64 md:h-full object-cover"
                     />
