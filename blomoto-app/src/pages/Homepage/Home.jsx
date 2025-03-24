@@ -1,15 +1,13 @@
 import React from "react";
 import Hero from "./Hero";
-import Features from "./Features";
-import Services from "./Services";
-import Stats from "./Stats";
-import Testimonials from "./Testimonials";
-import GetStarted from "./GetStarted";
+import MapComponent from "../../components/Map";
+
 
 function Home() {
   return (
     <div className="Home">
       <Hero />
+      <MapComponent />
         {/*<Features />
       <Services />
       <Stats />
