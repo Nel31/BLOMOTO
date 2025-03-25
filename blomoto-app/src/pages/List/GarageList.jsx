@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import GarageDetails from "./GarageDetails";
+import cars from  "../../assets/toyota.jpg";
+import torento from  "../../assets/TORENTO.jpg";
 
 function GarageList() {
   const garages = [
@@ -21,7 +23,7 @@ function GarageList() {
       services: ["Réparation", "Carrosserie", "Pneus"],
       contact: "+229 98 00 00 00",
       reviews: ["Bon accueil", "Prix corrects"],
-      image: "https://cdn-datak.motork.net/configurator-imgs/cars/fr/original/TOYOTA/LAND-CRUISER-250/48605_SUV-5-PORTES/toyota-land-cruiser-front-view.jpg",
+      image: cars,
     },
     {
       id: 3,
@@ -41,7 +43,7 @@ function GarageList() {
       services: ["Réparation", "Entretien", "Électronique"],
       contact: "+229 99 78 90 00",
       reviews: ["Service rapide", "Bon rapport qualité-prix"],
-      image: "https://cdn1-blog.iseecars.com/wp-content/uploads/2020/07/iStock-1340269597.jpg",
+      image: torento,
     },
     {
       id: 5,

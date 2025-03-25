@@ -1,26 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Phone, Mail, Globe, MessageCircle, User, LogOut } from 'lucide-react';
-import logo from '../assets/4.png';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import tikTok from '../assets/3.webp';
+import insta from '../assets/images.png';
+import face from '../assets/face.avif';
+import { Phone, Mail, Globe, MessageCircle } from 'lucide-react';
+import logo from '../assets/5.png';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // Check if user is logged in by looking for access token
-    const token = localStorage.getItem('access_token');
-    setIsLoggedIn(!!token);
-  }, [location]); // Re-check when location changes
-
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    setIsLoggedIn(false);
-    navigate('/login');
-  };
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -28,18 +16,70 @@ function Header() {
 
   return (
     <>
+      {/* Improved Blue contact bar with better responsive design */}
+      <div className="bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow-md">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
+            {/* Contact information */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6">
+              <a href="tel:+22959599988" className="flex items-center space-x-2 text-sm hover:text-blue-200 transition-colors duration-200 group">
+                <div className="bg-blue-600 p-1.5 rounded-full group-hover:bg-blue-800 transition-colors duration-200">
+                  <Phone size={14} />
+                </div>
+                <span>+229 59599988</span>
+              </a>
+              <a href="mailto:contact@hecm-afrique.net" className="flex items-center space-x-2 text-sm hover:text-blue-200 transition-colors duration-200 group">
+                <div className="bg-blue-600 p-1.5 rounded-full group-hover:bg-blue-800 transition-colors duration-200">
+                  <Mail size={14} />
+                </div>
+                <span>blomoto@gmail.com</span>
+              </a>
+              <a href="/webmail" className="flex items-center space-x-2 text-sm hover:text-blue-200 transition-colors duration-200 group">
+                <div className="bg-blue-600 p-1.5 rounded-full group-hover:bg-blue-800 transition-colors duration-200">
+                  <Globe size={14} />
+                </div>
+                <span>Webmail</span>
+              </a>
+            </div>
+            
+            {/* Social media icons */}
+            <div className="flex items-center justify-center md:justify-end space-x-4 mt-2 md:mt-0">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-200">
+                <div className="bg-white p-1 rounded-full">
+                  <img src={face} alt="facebook" className="h-5 w-5 object-contain" />
+                </div>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-200">
+                <div className="bg-white p-1 rounded-full">
+                  <img src={insta} alt="instagram" className="h-5 w-5 object-contain" />
+                </div>
+              </a>
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-200">
+                <div className="bg-white p-1 rounded-full">
+                  <img src={tikTok} alt="TikTok" className="h-5 w-5 object-contain" />
+                </div>
+              </a>
+              <a href="https://wa.me/22921324889" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-200">
+                <div className="bg-white p-1 rounded-full">
+                  <MessageCircle size={14} className="text-blue-600" />
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <header className="bg-white shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link to="/">
-            <img src={logo} alt="Logo" className="h-14 w-auto" />
+              <img src={logo} alt="Logo" className="h-14 w-auto" />
             </Link>
           </div>
 
           {/* Desktop Menu */}
           <nav className="hidden md:block">
-            <ul className="flex space-x-8 items-center">
+            <ul className="flex space-x-8">
               <li>
                 <Link 
                   to="/" 
@@ -80,27 +120,22 @@ function Header() {
                   Contact
                 </Link>
               </li>
-              {isLoggedIn ? (
-                <li className="relative">
-                  <Link
-                    to="/profile"
-                    className="flex items-center space-x-2 text-blue-600 hover:text-black transition-colors duration-200"
-                  >
-                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-200">
-                      <User className="text-white" size={24} />
-                    </div>
-                  </Link>
-                </li>
-              ) : (
-                <li>
-                  <Link 
-                    to="/login" 
-                    className={`font-medium text-xl ${isActive('/login') ? 'text-black font-semibold' : 'text-blue-600'} hover:text-black transition-colors duration-200`}
-                  >
-                    Mon compte
-                  </Link>
-                </li>
-              )}
+              <li>
+                <Link 
+                  to="/login" 
+                  className={`font-medium text-xl ${isActive('/login') ? 'text-black font-semibold' : 'text-blue-600'} hover:text-black transition-colors duration-200`}
+                >
+                  Mon compte
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/garage/1/dashboard" 
+                  className={`font-medium text-xl ${isActive('/garage/1/dashboard') ? 'text-black font-semibold' : 'text-blue-600'} hover:text-black transition-colors duration-200`}
+                >
+                  Tableau de bord
+                </Link>
+              </li>
             </ul>
           </nav>
 
@@ -165,41 +200,24 @@ function Header() {
                   Contact
                 </Link>
               </li>
-              {isLoggedIn ? (
-                <>
-                  <li>
-                    <Link 
-                      to="/profile" 
-                      className="block font-medium text-lg py-2 px-3 rounded-md text-blue-600 hover:bg-blue-50 transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Mon profil
-                    </Link>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setIsMenuOpen(false);
-                      }}
-                      className="w-full text-left font-medium text-lg py-2 px-3 rounded-md text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center space-x-2"
-                    >
-                      <LogOut size={20} />
-                      <span>Déconnexion</span>
-                    </button>
-                  </li>
-                </>
-              ) : (
-                <li>
-                  <Link 
-                    to="/login" 
-                    className={`block font-medium text-lg py-2 px-3 rounded-md ${isActive('/login') ? 'bg-blue-50 text-blue-700' : 'text-blue-600'} hover:bg-blue-50 transition-colors duration-200`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Mon compte
-                  </Link>
-                </li>
-              )}
+              <li>
+                <Link 
+                  to="/login" 
+                  className={`block font-medium text-lg py-2 px-3 rounded-md ${isActive('/login') ? 'bg-blue-50 text-blue-700' : 'text-blue-600'} hover:bg-blue-50 transition-colors duration-200`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Mon compte
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/garage/1/dashboard" 
+                  className={`block font-medium text-lg py-2 px-3 rounded-md ${isActive('/garage/1/dashboard') ? 'bg-blue-50 text-blue-700' : 'text-blue-600'} hover:bg-blue-50 transition-colors duration-200`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Tableau de bord
+                </Link>
+              </li>
             </ul>
           </div>
         )}
