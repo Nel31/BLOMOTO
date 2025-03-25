@@ -1,8 +1,9 @@
 import { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { useSearchParams } from 'react-router-dom';
 import torento from "../assets/TORENTO.jpg";
 import cars from "../assets/toyota.jpg";
 import GarageDetails from '../pages/List/GarageDetails';
@@ -92,12 +93,36 @@ const customIcon = new Icon({
 });
 
 function MapComponent() {
-  // Centre de Cotonou
   const cotonouCenter = [6.3650, 2.3920];
   const [selectedGarage, setSelectedGarage] = useState(null);
+  const [searchParams] = useSearchParams();
+  const garageId = searchParams.get('garageId');
+
+  useEffect(() => {
+    if (garageId) {
+      const garage = garages.find(g => g.id === parseInt(garageId));
+      if (garage) {
+        setSelectedGarage(garage);
+      }
+    }
+  }, [garageId]);
+
+  const handleGarageSelect = (garage) => {
+    setSelectedGarage(garage);
+    window.history.pushState({}, '', `?garageId=${garage.id}&fromMap=true`);
+  };
+
+  const handleClose = () => {
+    setSelectedGarage(null);
+    window.history.pushState({}, '', '/');
+  };
 
   if (selectedGarage) {
-    return <GarageDetails garage={selectedGarage} onClose={() => setSelectedGarage(null)} />;
+    return (
+      <div className="bg-gradient-to-b from-gray-50 to-gray-100">
+        <GarageDetails garage={selectedGarage} onClose={handleClose} />
+      </div>
+    );
   }
 
   return (
@@ -163,7 +188,7 @@ function MapComponent() {
                     <p className="text-sm text-gray-600 mb-3">{garage.contact}</p>
                     <button
                       className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
-                      onClick={() => setSelectedGarage(garage)}
+                      onClick={() => handleGarageSelect(garage)}
                     >
                       <MapPin size={16} />
                       Prendre rendez-vous

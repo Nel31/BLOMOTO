@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from 'react-router-dom';
+import torento from "../../assets/TORENTO.jpg";
+import cars from "../../assets/toyota.jpg";
 import GarageDetails from "./GarageDetails";
-import cars from  "../../assets/toyota.jpg";
-import torento from  "../../assets/TORENTO.jpg";
 
 function GarageList() {
+  const [searchParams] = useSearchParams();
+  const garageId = searchParams.get('garageId');
+  
   const garages = [
     {
       id: 1,
@@ -69,11 +73,32 @@ function GarageList() {
 
   const [selectedGarage, setSelectedGarage] = useState(null);
 
+  useEffect(() => {
+    if (garageId) {
+      const garage = garages.find(g => g.id === parseInt(garageId));
+      if (garage) {
+        setSelectedGarage(garage);
+      }
+    }
+  }, [garageId]);
+
+  const handleGarageSelect = (garage) => {
+    setSelectedGarage(garage);
+    // Mettre à jour l'URL sans recharger la page
+    window.history.pushState({}, '', `?garageId=${garage.id}`);
+  };
+
+  const handleClose = () => {
+    setSelectedGarage(null);
+    // Mettre à jour l'URL sans recharger la page
+    window.history.pushState({}, '', '/');
+  };
+
   return (
     <section id="garage-list" className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         {selectedGarage ? (
-          <GarageDetails garage={selectedGarage} onClose={() => setSelectedGarage(null)} />
+          <GarageDetails garage={selectedGarage} onClose={handleClose} />
         ) : (
           <>
             <h2 className="text-3xl font-bold text-center text-dark mb-12">Nos Garages Partenaires</h2>
@@ -90,7 +115,7 @@ function GarageList() {
                     <p className="text-gray-600 mb-4">{garage.address}</p>
                     <button
                       className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
-                      onClick={() => setSelectedGarage(garage)}
+                      onClick={() => handleGarageSelect(garage)}
                     >
                       Voir détails
                     </button>

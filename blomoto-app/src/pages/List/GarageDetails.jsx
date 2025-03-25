@@ -1,14 +1,19 @@
+import { Calendar, ChevronLeft, Clock, Home, MapPin, MessageSquare, Phone, Star, PenTool as Tool, User } from 'lucide-react';
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, Phone, Star, PenTool as Tool, User, MessageSquare, ChevronLeft, Home } from 'lucide-react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 function GarageDetails({ garage, onClose }) {
-  if (!garage) return null;
-
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const fromMap = searchParams.get('fromMap') === 'true';
+  const isHomePage = location.pathname === '/';
   const [clientName, setClientName] = useState("");
   const [phone, setPhone] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [issueDescription, setIssueDescription] = useState("");
+
+  if (!garage) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,7 +36,7 @@ function GarageDetails({ garage, onClose }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className={`${isHomePage ? 'min-h-screen' : ''} bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8`}>
       <div className="max-w-7xl mx-auto">
         {/* Navigation Header */}
         <div className="mb-6 flex items-center">
@@ -39,8 +44,8 @@ function GarageDetails({ garage, onClose }) {
             onClick={onClose} 
             className="text-blue-600 hover:text-blue-800 flex items-center font-medium"
           >
-            <Home className="w-5 h-5 mr-2" />
-            Garages
+            {fromMap ? <MapPin className="w-5 h-5 mr-2" /> : <Home className="w-5 h-5 mr-2" />}
+            {fromMap ? 'Retour à la carte' : 'Garages'}
           </button>
         </div>
         
