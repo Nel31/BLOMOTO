@@ -1,7 +1,7 @@
 import { MapPin } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useState } from 'react';
-import Map, { Marker, NavigationControl, Popup } from 'react-map-gl';
+// import Map, { Marker, NavigationControl, Popup } from 'react-map-gl';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibmVsMzEiLCJhIjoiY204bjc0bWJ1MDJyYTJpczVxZW81dXNmcyJ9.ELBCK7CT4kid8H9wRwVYMA';
 

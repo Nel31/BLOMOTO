@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Phone, Mail, Globe, MessageCircle, User, LogOut } from 'lucide-react';
+import logo from '../assets/4.png';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,49 +28,12 @@ function Header() {
 
   return (
     <>
-      {/* Blue contact bar */}
-      <div className="bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow-md">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
-            {/* Contact information */}
-            <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6">
-              <a href="tel:+22959599988" className="flex items-center space-x-2 text-sm hover:text-blue-200 transition-colors duration-200 group">
-                <div className="bg-blue-600 p-1.5 rounded-full group-hover:bg-blue-800 transition-colors duration-200">
-                  <Phone size={14} />
-                </div>
-                <span>+229 59599988</span>
-              </a>
-              <a href="mailto:contact@hecm-afrique.net" className="flex items-center space-x-2 text-sm hover:text-blue-200 transition-colors duration-200 group">
-                <div className="bg-blue-600 p-1.5 rounded-full group-hover:bg-blue-800 transition-colors duration-200">
-                  <Mail size={14} />
-                </div>
-                <span>blomoto@gmail.com</span>
-              </a>
-              <a href="/webmail" className="flex items-center space-x-2 text-sm hover:text-blue-200 transition-colors duration-200 group">
-                <div className="bg-blue-600 p-1.5 rounded-full group-hover:bg-blue-800 transition-colors duration-200">
-                  <Globe size={14} />
-                </div>
-                <span>Webmail</span>
-              </a>
-            </div>
-            
-            {/* Social media icons */}
-            <div className="flex items-center justify-center md:justify-end space-x-4 mt-2 md:mt-0">
-              <a href="https://wa.me/22921324889" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-200">
-                <div className="bg-white p-1 rounded-full">
-                  <MessageCircle size={14} className="text-blue-600" />
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
       
       <header className="bg-white shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link to="/">
-              <span className="text-2xl font-bold text-blue-600">Logo</span>
+            <img src={logo} alt="Logo" className="h-14 w-auto" />
             </Link>
           </div>
 

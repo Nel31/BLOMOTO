@@ -1,123 +1,135 @@
-import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, Calendar, Building } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-/**
- * @typedef {Object} UserProfile
- * @property {string} username
- * @property {string} first_name
- * @property {string} last_name
- * @property {string} email
- * @property {string} phone
- * @property {string} created_at
- */
-
-function Profile() {
-  const [profile, setProfile] = useState(/** @type {UserProfile | null} */ (null));
+const UserProfile = ({ userId }) => {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(/** @type {string | null} */ (null));
+  const [error, setError] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-          throw new Error('Non authentifié');
-        }
-
-        const response = await fetch('http://localhost:8000/user_app/profile/', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération du profil');
-        }
-
-        const data = await response.json();
-        setProfile(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Une erreur est survenue');
-      } finally {
+    axios
+      .get(`http://127.0.0.1:8000/user_app/users/1/`)
+      .then((response) => {
+        setUser(response.data);
+        setFormData(response.data);
         setLoading(false);
-      }
-    };
+      })
+      .catch((error) => {
+        console.error("Erreur lors du chargement de l'utilisateur :", error);
+        setError("Impossible de charger les données.");
+        setLoading(false);
+      });
+  }, [userId]);
 
-    fetchProfile();
-  }, []);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .put(`http://127.0.0.1:8000/user_app/users/1/`, formData)
+      .then((response) => {
+        setUser(response.data);
+        setEditMode(false);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la mise à jour :", error);
+        setError("Impossible de mettre à jour les données.");
+      });
+  };
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
-          <p>{error}</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <p className="text-center text-gray-500">Chargement...</p>;
+  if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-          {/* En-tête du profil */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-400 px-8 py-10">
-            <div className="flex items-center">
-              <div className="h-24 w-24 bg-white rounded-full flex items-center justify-center">
-                <User size={48} className="text-blue-600" />
-              </div>
-              <div className="ml-6">
-                <h1 className="text-3xl font-bold text-white">
-                  {profile?.first_name} {profile?.last_name}
-                </h1>
-                <p className="text-blue-100 mt-1">{profile?.username}</p>
-              </div>
-            </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+      <div className="bg-white shadow-lg rounded-lg p-6 max-w-md w-full">
+        <h2 className="text-xl font-bold text-center text-gray-800">
+          Profil de {user.username}
+        </h2>
+        <img
+          src={user.profile_picture ? `http://127.0.0.1:8000${user.profile_picture}` : "/default_avatar.png"}
+          alt="Profile"
+          className="w-24 h-24 rounded-full mx-auto mt-4"
+        />
+        
+        {!editMode ? (
+          <div className="text-gray-700 mt-4">
+            <p><strong>Nom :</strong> {user.first_name} {user.last_name}</p>
+            <p><strong>Email :</strong> {user.email}</p>
+            <p><strong>Téléphone :</strong> {user.phone_number || "Non renseigné"}</p>
+            <p><strong>Date de naissance :</strong> {user.birth_date || "Non renseignée"}</p>
+            <button 
+              onClick={() => setEditMode(true)} 
+              className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+            >
+              Modifier le profil
+            </button>
           </div>
-
-          {/* Informations détaillées */}
-          <div className="px-8 py-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3 text-gray-700">
-                  <Mail className="h-5 w-5 text-blue-500" />
-                  <span>{profile?.email}</span>
-                </div>
-                <div className="flex items-center space-x-3 text-gray-700">
-                  <Phone className="h-5 w-5 text-blue-500" />
-                  <span>{profile?.phone}</span>
-                </div>
-                <div className="flex items-center space-x-3 text-gray-700">
-                  <Calendar className="h-5 w-5 text-blue-500" />
-                  <span>Membre depuis: {new Date(profile?.created_at || '').toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <button className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2">
-                <User size={20} />
-                Modifier le profil
+        ) : (
+          <form onSubmit={handleSubmit} className="mt-4">
+            <input
+              type="text"
+              name="first_name"
+              value={formData.first_name || ""}
+              onChange={handleChange}
+              placeholder="Prénom"
+              className="w-full p-2 border rounded mb-2"
+            />
+            <input
+              type="text"
+              name="last_name"
+              value={formData.last_name || ""}
+              onChange={handleChange}
+              placeholder="Nom"
+              className="w-full p-2 border rounded mb-2"
+            />
+            <input
+              type="email"
+              name="email"
+              value={formData.email || ""}
+              onChange={handleChange}
+              placeholder="Email"
+              className="w-full p-2 border rounded mb-2"
+            />
+            <input
+              type="text"
+              name="phone_number"
+              value={formData.phone_number || ""}
+              onChange={handleChange}
+              placeholder="Téléphone"
+              className="w-full p-2 border rounded mb-2"
+            />
+            <input
+              type="date"
+              name="birth_date"
+              value={formData.birth_date || ""}
+              onChange={handleChange}
+              className="w-full p-2 border rounded mb-2"
+            />
+            <div className="flex justify-between mt-4">
+              <button 
+                type="submit" 
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+              >
+                Enregistrer
               </button>
-              <button className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center justify-center gap-2">
-                <Building size={20} />
-                Gérer mon garage
+              <button 
+                type="button" 
+                onClick={() => setEditMode(false)} 
+                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
+              >
+                Annuler
               </button>
             </div>
-          </div>
-        </div>
+          </form>
+        )}
       </div>
     </div>
   );
-}
+};
 
-export default Profile;
+export default UserProfile;
