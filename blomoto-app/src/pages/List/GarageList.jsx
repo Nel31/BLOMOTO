@@ -7,7 +7,7 @@ import GarageDetails from "./GarageDetails";
 function GarageList() {
   const [searchParams] = useSearchParams();
   const garageId = searchParams.get('garageId');
-  
+
   const garages = [
     {
       id: 1,
