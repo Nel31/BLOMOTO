@@ -1,18 +1,18 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/Homepage/Home';
-import GarageCards from './pages/Cards/GarageCards';
-import GarageList from './pages/List/GarageList';
-import About from './pages/About';
-import Header from './components/Header';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Footer from './components/Footer';
-import ServicesList from './pages/Services/ServiceList';
-import Register from './pages/Register';
-import Login from './pages/Login';
-import GarageDetails from './pages/List/GarageDetails';
-import GarageDashboard from './pages/List/GarageDashboard';
-import { Contact } from './pages/Contact';
+import Header from './components/Header';
 import Profile from './components/Profile';
+import About from './pages/About';
+import GarageCards from './pages/Cards/GarageCards';
+import { Contact } from './pages/Contact';
+import Home from './pages/Homepage/Home';
+import GarageDashboard from './pages/List/GarageDashboard';
+import GarageDetails from './pages/List/GarageDetails';
+import GarageList from './pages/List/GarageList';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ServicesList from './pages/Services/ServiceList';
 
 function App() {
   // Définition des couleurs principales pour le thème du site

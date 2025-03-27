@@ -1,19 +1,43 @@
-import { Calendar, ChevronLeft, Clock, Home, MapPin, MessageSquare, Phone, Star, PenTool as Tool, User } from 'lucide-react';
-import React, { useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { Calendar, Clock, Home, MapPin, MessageSquare, Phone, Star, PenTool as Tool, User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-function GarageDetails({ garage, onClose }) {
-  const [searchParams] = useSearchParams();
-  const location = useLocation();
-  const fromMap = searchParams.get('fromMap') === 'true';
-  const isHomePage = location.pathname === '/';
+function GarageDetails() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [garage, setGarage] = useState(null);
   const [clientName, setClientName] = useState("");
   const [phone, setPhone] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [issueDescription, setIssueDescription] = useState("");
 
-  if (!garage) return null;
+  useEffect(() => {
+    // Ici, vous devrez implémenter la logique pour récupérer les données du garage
+    // en utilisant l'ID de l'URL
+    const fetchGarageDetails = async () => {
+      try {
+        // Exemple de données temporaires
+        const mockGarage = {
+          id: id,
+          name: "Garage " + id,
+          address: "123 rue Example",
+          contact: "01 23 45 67 89",
+          rating: 4.5,
+          image: "https://example.com/garage.jpg",
+          services: ["Diagnostic", "Réparation", "Entretien", "Vidange"]
+        };
+        setGarage(mockGarage);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des détails du garage:", error);
+        navigate('/garage-list');
+      }
+    };
+
+    fetchGarageDetails();
+  }, [id, navigate]);
+
+  if (!garage) return <div>Chargement...</div>;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,16 +60,16 @@ function GarageDetails({ garage, onClose }) {
   };
 
   return (
-    <div className={`${isHomePage ? 'min-h-screen' : ''} bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8`}>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Navigation Header */}
         <div className="mb-6 flex items-center">
           <button 
-            onClick={onClose} 
+            onClick={() => navigate('/garage-list')} 
             className="text-blue-600 hover:text-blue-800 flex items-center font-medium"
           >
-            {fromMap ? <MapPin className="w-5 h-5 mr-2" /> : <Home className="w-5 h-5 mr-2" />}
-            {fromMap ? 'Retour à la carte' : 'Garages'}
+            <Home className="w-5 h-5 mr-2" />
+            Retour à la liste des garages
           </button>
         </div>
         
@@ -107,30 +131,13 @@ function GarageDetails({ garage, onClose }) {
                 Avis clients
               </h2>
               <div className="space-y-4">
-                {[
-                  { name: "Jean Dupont", rating: 4, comment: "Excellent service et accueil chaleureux !" },
-                  { name: "Marie Curie", rating: 5, comment: "Rapide et efficace, je recommande vivement !" },
-                  { name: "Albert Einstein", rating: 3, comment: "Bon travail mais un peu d'attente." }
-                ].map((review, index) => (
-                  <div key={index} className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center">
-                        <User className="w-10 h-10 text-gray-400 mr-3" />
-                        <span className="font-semibold">{review.name}</span>
-                      </div>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-5 h-5 ${
-                              i < review.rating ? 'text-yellow-400' : 'text-gray-300'
-                            }`}
-                            fill={i < review.rating ? 'currentColor' : 'none'}
-                          />
-                        ))}
-                      </div>
+                {garage.reviews?.map((review, index) => (
+                  <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
+                    <div className="flex items-center mb-2">
+                      <User className="w-5 h-5 mr-2 text-gray-500" />
+                      <span className="font-medium">Client {index + 1}</span>
                     </div>
-                    <p className="text-gray-600 italic">{review.comment}</p>
+                    <p className="text-gray-600">{review}</p>
                   </div>
                 ))}
               </div>
@@ -139,7 +146,7 @@ function GarageDetails({ garage, onClose }) {
 
           {/* Right Column - Appointment Form */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
+            <div className="bg-white rounded-xl shadow-md p-6 sticky top-6">
               <h2 className="text-2xl font-semibold mb-6 flex items-center">
                 <Calendar className="w-6 h-6 mr-2 text-blue-600" />
                 Prendre rendez-vous
@@ -153,12 +160,10 @@ function GarageDetails({ garage, onClose }) {
                     type="text"
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Votre nom"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Téléphone
@@ -167,12 +172,10 @@ function GarageDetails({ garage, onClose }) {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Votre numéro"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Date du rendez-vous
@@ -181,11 +184,10 @@ function GarageDetails({ garage, onClose }) {
                     type="date"
                     value={appointmentDate}
                     onChange={(e) => setAppointmentDate(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Service souhaité
@@ -193,45 +195,36 @@ function GarageDetails({ garage, onClose }) {
                   <select
                     value={selectedService}
                     onChange={(e) => setSelectedService(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Sélectionnez un service</option>
                     {garage.services.map((service, index) => (
-                      <option key={index} value={service}>{service}</option>
+                      <option key={index} value={service}>
+                        {service}
+                      </option>
                     ))}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                    Description du service <span className="text-xs text-gray-500 ml-2">(facultatif)</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description de la panne (optionnel)
                   </label>
                   <textarea
                     value={issueDescription}
                     onChange={(e) => setIssueDescription(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Décrivez votre problème..."
                     rows="3"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center"
+                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-2"
                 >
-                  <Clock className="w-5 h-5 mr-2" />
+                  <Clock className="w-5 h-5" />
                   Confirmer le rendez-vous
                 </button>
               </form>
-
-              <button
-                onClick={onClose}
-                className="mt-4 w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center justify-center"
-              >
-                <ChevronLeft className="w-5 h-5 mr-2" />
-                Retour
-              </button>
             </div>
           </div>
         </div>

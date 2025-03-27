@@ -1,10 +1,9 @@
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import React, { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import torento from "../assets/TORENTO.jpg";
 import cars from "../assets/toyota.jpg";
-import GarageDetails from '../pages/List/GarageDetails';
 
 // Styles CSS pour les marqueurs
 const markerStyles = {
@@ -91,41 +90,45 @@ const garages = [
 ];
 
 function MapComponent() {
-  const mapContainerRef = useRef();
-  const mapRef = useRef();
-  const [selectedGarage, setSelectedGarage] = useState(null);
-  const [searchParams] = useSearchParams();
-  const garageId = searchParams.get('garageId');
+  const mapContainerRef = useRef(null);
+  const mapRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (garageId) {
-      const garage = garages.find(g => g.id === parseInt(garageId));
-      if (garage) {
-        setSelectedGarage(garage);
-      }
-    }
-  }, [garageId]);
+    if (!mapContainerRef.current) return;
 
-  useEffect(() => {
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/navigation-night-v1',
-      center: [2.3920, 6.3650], // Cotonou center coordinates
-      zoom: 14
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [2.3824, 6.3723], // Cotonou coordinates (position par défaut)
+      zoom: 12
     });
 
     // Ajout du contrôle de géolocalisation
-    mapRef.current.addControl(
-      new mapboxgl.GeolocateControl({
-        positionOptions: {
-          enableHighAccuracy: true
-        },
-        trackUserLocation: true,
-        showUserHeading: true
-      })
-    );
+    const geolocateControl = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserHeading: true
+    });
+
+    mapRef.current.addControl(geolocateControl);
+
+    // Écouter l'événement de géolocalisation
+    geolocateControl.on('geolocate', (e) => {
+      const { longitude, latitude } = e.coords;
+      mapRef.current.flyTo({
+        center: [longitude, latitude],
+        zoom: 14,
+        duration: 2000
+      });
+    });
+
+    // Déclencher automatiquement la géolocalisation
+    geolocateControl.trigger();
 
     mapRef.current.on('load', () => {
       // Add markers for each garage
@@ -167,7 +170,7 @@ function MapComponent() {
                   </div>
                   <p class="text-sm text-gray-600 mb-3">${garage.contact}</p>
                   <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-                          onclick="window.location.href='?garageId=${garage.id}&fromMap=true'">
+                          onclick="window.location.href='/garage/${garage.id}'">
                     Prendre rendez-vous
                   </button>
                 </div>
@@ -182,20 +185,7 @@ function MapComponent() {
         mapRef.current.remove();
       }
     };
-  }, []);
-
-  const handleClose = () => {
-    setSelectedGarage(null);
-    window.history.pushState({}, '', '/');
-  };
-
-  if (selectedGarage) {
-    return (
-      <div className="bg-gradient-to-b from-gray-50 to-gray-100">
-        <GarageDetails garage={selectedGarage} onClose={handleClose} />
-      </div>
-    );
-  }
+  }, [navigate]);
 
   return (
     <section id="map-section" className="py-16 bg-gray-50">
