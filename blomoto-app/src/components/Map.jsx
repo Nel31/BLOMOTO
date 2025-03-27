@@ -116,6 +116,17 @@ function MapComponent() {
       zoom: 14
     });
 
+    // Ajout du contrôle de géolocalisation
+    mapRef.current.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true
+      })
+    );
+
     mapRef.current.on('load', () => {
       // Add markers for each garage
       garages.forEach(garage => {
