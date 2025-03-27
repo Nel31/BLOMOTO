@@ -75,7 +75,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # L'URL de votre application React
+    "http://localhost:5173",
+    "https://blomoto-nine.vercel.app/",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
