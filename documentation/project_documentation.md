@@ -4,19 +4,20 @@
 ### Frontend (blomoto-app)
 ```
 └── blomoto-app
+    └── README.md
     └── eslint.config.js
     └── index.html
-    └── package.json
     └── package-lock.json
+    └── package.json
     └── postcss.config.js
     └── public
         └── 2.jpeg
         └── index.html
         └── vite.svg
-    └── README.md
     └── src
         └── App.css
         └── App.jsx
+        └── Home.jsx
         └── assets
             └── 0fc404_ebef14f1549447ecb9acbdbe811515ac~mv2.jpg
             └── 1.png
@@ -27,19 +28,19 @@
             └── 5.png
             └── 642ec33ad58cc78a9f2ac756_9f6be7e21e6854da18d99b26b8325ec80f286671_arbre-transmission-automobile.jpeg
             └── 64886295_l-scaled.jpg
-            └── apprendre_la_mecanique_auto_avec_un_livre_7401_2_600.jpg
             └── Booster.jpg
+            └── Courroie-de-distribution.png
+            └── apprendre_la_mecanique_auto_avec_un_livre_7401_2_600.jpg
             └── car-engine-2021-08-27-11-27-27-utc-1024x683.webp
             └── changer-plaquettes-de-frein.jpg
-            └── Courroie-de-distribution.png
             └── diagnostic-auto-opt-scaled.jpg
             └── dsc04624-scaled.jpg
             └── face.avif
             └── face.png
             └── fonctionnemetn-role-utilite-amortisseur-3.jpg
+            └── iStock-1340269597.jpg
             └── images.jpeg
             └── images.png
-            └── iStock-1340269597.jpg
             └── istockphoto-957612802-612x612.jpg
             └── logo-de-reparation-de-l-entretien-de-la-voiture-2bkgetb.jpg
             └── photo-1486262715619-67b85e0b08d3.avif
@@ -56,7 +57,6 @@
             └── Profile.jsx
         └── config
             └── api.js
-        └── Home.jsx
         └── index.css
         └── index.js
         └── main.jsx
@@ -89,18 +89,18 @@
 ```
 └── blomotobackend
     └── blomotobackend
-        └── asgi.py
         └── __init__.py
+        └── asgi.py
         └── media
             └── services_pictures
                 └── 642ec33ad58cc78a9f2ac756_9f6be7e21e6854da18d99b26b8325ec80f286671_arb_Kyq43mi.jpeg
                 └── 64886295_l-scaled.jpg
-                └── apprendre_la_mecanique_auto_avec_un_livre_7401_2_600.jpg
                 └── Booster.jpg
-                └── car-engine-2021-08-27-11-27-27-utc-1024x683_I0FqnV8.webp
-                └── car-engine-2021-08-27-11-27-27-utc-1024x683.webp
-                └── changer-plaquettes-de-frein.jpg
                 └── Courroie-de-distribution.png
+                └── apprendre_la_mecanique_auto_avec_un_livre_7401_2_600.jpg
+                └── car-engine-2021-08-27-11-27-27-utc-1024x683.webp
+                └── car-engine-2021-08-27-11-27-27-utc-1024x683_I0FqnV8.webp
+                └── changer-plaquettes-de-frein.jpg
                 └── dsc04624-scaled.jpg
                 └── dsc04624-scaled_SfL8Kz2.jpg
                 └── fonctionnemetn-role-utilite-amortisseur-3.jpg
@@ -113,9 +113,9 @@
         └── wsgi.py
     └── db.sqlite3
     └── garage_app
+        └── __init__.py
         └── admin.py
         └── apps.py
-        └── __init__.py
         └── migrations
             └── 0001_initial.py
             └── __init__.py
@@ -129,12 +129,12 @@
         └── services_pictures
             └── 642ec33ad58cc78a9f2ac756_9f6be7e21e6854da18d99b26b8325ec80f286671_arb_Kyq43mi.jpeg
             └── 64886295_l-scaled.jpg
-            └── apprendre_la_mecanique_auto_avec_un_livre_7401_2_600.jpg
             └── Booster.jpg
-            └── car-engine-2021-08-27-11-27-27-utc-1024x683_I0FqnV8.webp
-            └── car-engine-2021-08-27-11-27-27-utc-1024x683.webp
-            └── changer-plaquettes-de-frein.jpg
             └── Courroie-de-distribution.png
+            └── apprendre_la_mecanique_auto_avec_un_livre_7401_2_600.jpg
+            └── car-engine-2021-08-27-11-27-27-utc-1024x683.webp
+            └── car-engine-2021-08-27-11-27-27-utc-1024x683_I0FqnV8.webp
+            └── changer-plaquettes-de-frein.jpg
             └── dsc04624-scaled.jpg
             └── dsc04624-scaled_SfL8Kz2.jpg
             └── fonctionnemetn-role-utilite-amortisseur-3.jpg
@@ -146,9 +146,9 @@
     └── requirements.txt
     └── run_backend.sh
     └── service_app
+        └── __init__.py
         └── admin.py
         └── apps.py
-        └── __init__.py
         └── migrations
             └── 0001_initial.py
             └── 0002_category_comment.py
@@ -160,10 +160,10 @@
         └── urls.py
         └── views.py
     └── user_app
+        └── __init__.py
         └── admin.py
         └── apps.py
         └── authentication.py
-        └── __init__.py
         └── migrations
             └── 0001_initial.py
             └── 0002_alter_avis_rating.py
