@@ -1,10 +1,12 @@
 import { Calendar, Clock, Home, MapPin, MessageSquare, Phone, Star, PenTool as Tool, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useGarageContext } from '../../context/GarageContext';
 
 function GarageDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { garages } = useGarageContext();
   const [garage, setGarage] = useState(null);
   const [clientName, setClientName] = useState("");
   const [phone, setPhone] = useState("");
@@ -13,29 +15,14 @@ function GarageDetails() {
   const [issueDescription, setIssueDescription] = useState("");
 
   useEffect(() => {
-    // Ici, vous devrez implémenter la logique pour récupérer les données du garage
-    // en utilisant l'ID de l'URL
-    const fetchGarageDetails = async () => {
-      try {
-        // Exemple de données temporaires
-        const mockGarage = {
-          id: id,
-          name: "Garage " + id,
-          address: "123 rue Example",
-          contact: "01 23 45 67 89",
-          rating: 4.5,
-          image: "https://example.com/garage.jpg",
-          services: ["Diagnostic", "Réparation", "Entretien", "Vidange"]
-        };
-        setGarage(mockGarage);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des détails du garage:", error);
-        navigate('/garage-list');
-      }
-    };
-
-    fetchGarageDetails();
-  }, [id, navigate]);
+    const selectedGarage = garages.find(g => g.id === parseInt(id));
+    if (selectedGarage) {
+      setGarage(selectedGarage);
+    } else {
+      console.error("Garage non trouvé");
+      navigate('/garage-list');
+    }
+  }, [id, garages, navigate]);
 
   if (!garage) return <div>Chargement...</div>;
 
