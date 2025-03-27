@@ -1,20 +1,31 @@
-import { Icon } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { MapPin } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import torento from "../assets/TORENTO.jpg";
 import cars from "../assets/toyota.jpg";
 import GarageDetails from '../pages/List/GarageDetails';
 
-// Coordonnées des garages de GarageList
+// Styles CSS pour les marqueurs
+const markerStyles = {
+  marker: {
+    backgroundImage: 'url(https://docs.mapbox.com/help/demos/custom-markers-gl-js/mapbox-icon.png)',
+    backgroundSize: 'cover',
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    cursor: 'pointer',
+    border: '2px solid white',
+    boxShadow: '0 0 10px rgba(0,0,0,0.3)'
+  }
+};
+
+// Coordonnées des garages
 const garages = [
   {
     id: 1,
     name: "AUTOSP",
-    latitude: 6.3723,
-    longitude: 2.3824,
+    coordinates: [2.3824, 6.3723],
     rating: 4.7,
     address: "Camp Guezo, Carrefour, Cotonou",
     services: ["VIDANGE", "REVISION", "FREINAGE"],
@@ -25,8 +36,7 @@ const garages = [
   {
     id: 2,
     name: "CFAO MOTORS",
-    latitude: 6.3575,
-    longitude: 2.4123,
+    coordinates: [2.4123, 6.3575],
     rating: 4.5,
     address: "Cotonou, Carrefour Toyota",
     services: ["Réparation", "Carrosserie", "Pneus"],
@@ -37,8 +47,7 @@ const garages = [
   {
     id: 3,
     name: "AUTOZONE",
-    latitude: 6.3651,
-    longitude: 2.4002,
+    coordinates: [2.4002, 6.3651],
     rating: 4.8,
     address: "Cotonou, Akpakpa",
     services: ["Réparation", "Entretien", "Électronique"],
@@ -49,8 +58,7 @@ const garages = [
   {
     id: 4,
     name: "CARS MUSCLE",
-    latitude: 6.3688,
-    longitude: 2.3915,
+    coordinates: [2.3915, 6.3688],
     rating: 4.8,
     address: "Cotonou, saint-michel",
     services: ["Réparation", "Entretien", "Électronique"],
@@ -61,8 +69,7 @@ const garages = [
   {
     id: 5,
     name: "GL MECANO",
-    latitude: 6.3550,
-    longitude: 2.3998,
+    coordinates: [2.3998, 6.3550],
     rating: 4.8,
     address: "CALAVI, SOS",
     services: ["Réparation", "Entretien", "Électronique"],
@@ -73,8 +80,7 @@ const garages = [
   {
     id: 6,
     name: "CARS Drive MECO",
-    latitude: 6.3620,
-    longitude: 2.4050,
+    coordinates: [2.4050, 6.3620],
     rating: 4.8,
     address: "Cotonou, saint-michel",
     services: ["Réparation", "Entretien", "Électronique"],
@@ -84,16 +90,9 @@ const garages = [
   }
 ];
 
-// Custom marker icon
-const customIcon = new Icon({
-  iconUrl: 'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png',
-  iconSize: [35, 35],
-  iconAnchor: [17, 35],
-  popupAnchor: [0, -35]
-});
-
 function MapComponent() {
-  const cotonouCenter = [6.3650, 2.3920];
+  const mapContainerRef = useRef();
+  const mapRef = useRef();
   const [selectedGarage, setSelectedGarage] = useState(null);
   const [searchParams] = useSearchParams();
   const garageId = searchParams.get('garageId');
@@ -107,10 +106,72 @@ function MapComponent() {
     }
   }, [garageId]);
 
-  const handleGarageSelect = (garage) => {
-    setSelectedGarage(garage);
-    window.history.pushState({}, '', `?garageId=${garage.id}&fromMap=true`);
-  };
+  useEffect(() => {
+    mapboxgl.accessToken = 'pk.eyJ1IjoibmVsMzEiLCJhIjoiY204bjc0bWJ1MDJyYTJpczVxZW81dXNmcyJ9.ELBCK7CT4kid8H9wRwVYMA';
+
+    mapRef.current = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/navigation-night-v1',
+      center: [2.3920, 6.3650], // Cotonou center coordinates
+      zoom: 14
+    });
+
+    mapRef.current.on('load', () => {
+      // Add markers for each garage
+      garages.forEach(garage => {
+        const el = document.createElement('div');
+        el.className = 'marker';
+        Object.assign(el.style, markerStyles.marker);
+
+        new mapboxgl.Marker(el)
+          .setLngLat(garage.coordinates)
+          .setPopup(
+            new mapboxgl.Popup({ 
+              offset: 25,
+              closeButton: true,
+              closeOnClick: false,
+              className: 'custom-popup'
+            })
+              .setHTML(`
+                <div class="p-3">
+                  <h3 class="font-bold text-lg mb-1">${garage.name}</h3>
+                  <p class="text-gray-600 text-sm mb-2">${garage.address}</p>
+                  <div class="flex flex-wrap gap-1 mb-2">
+                    ${garage.services.map(service => `
+                      <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                        ${service}
+                      </span>
+                    `).join('')}
+                  </div>
+                  <div class="flex items-center mb-3">
+                    <div class="flex items-center">
+                      ${[...Array(5)].map((_, i) => `
+                        <svg class="w-4 h-4 ${i < Math.floor(garage.rating) ? 'text-yellow-400' : 'text-gray-300'}"
+                             fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      `).join('')}
+                      <span class="ml-1 text-sm text-gray-600">${garage.rating}/5</span>
+                    </div>
+                  </div>
+                  <p class="text-sm text-gray-600 mb-3">${garage.contact}</p>
+                  <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                          onclick="window.location.href='?garageId=${garage.id}&fromMap=true'">
+                    Prendre rendez-vous
+                  </button>
+                </div>
+              `)
+          )
+          .addTo(mapRef.current);
+      });
+    });
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
+    };
+  }, []);
 
   const handleClose = () => {
     setSelectedGarage(null);
@@ -134,78 +195,14 @@ function MapComponent() {
         </div>
         
         <div className="h-[600px] rounded-xl overflow-hidden shadow-xl">
-          <MapContainer
-            center={cotonouCenter}
-            zoom={14}
+          <div
+            ref={mapContainerRef}
             style={{ height: '100%', width: '100%' }}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            
-            {garages.map(garage => (
-              <Marker
-                key={garage.id}
-                position={[garage.latitude, garage.longitude]}
-                icon={customIcon}
-              >
-                <Popup>
-                  <div className="p-3">
-                    <h3 className="font-bold text-lg mb-1">{garage.name}</h3>
-                    <p className="text-gray-600 text-sm mb-2">{garage.address}</p>
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      {garage.services.map((service, index) => (
-                        <span 
-                          key={index}
-                          className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
-                        >
-                          {service}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center mb-3">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < Math.floor(garage.rating)
-                                ? 'text-yellow-400'
-                                : 'text-gray-300'
-                            }`}
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                        <span className="ml-1 text-sm text-gray-600">
-                          {garage.rating}/5
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">{garage.contact}</p>
-                    <button
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
-                      onClick={() => handleGarageSelect(garage)}
-                    >
-                      <MapPin size={16} />
-                      Prendre rendez-vous
-                    </button>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+          />
         </div>
       </div>
     </section>
   );
 }
-
-MapComponent.propTypes = {
-  // Ajoutez ici les PropTypes si nécessaire
-};
 
 export default MapComponent;
