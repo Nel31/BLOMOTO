@@ -94,6 +94,39 @@ function MapComponent() {
   const mapRef = useRef(null);
   const navigate = useNavigate();
 
+  // Fonction pour calculer la distance entre deux points
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Rayon de la Terre en km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  // Fonction pour trouver le garage le plus proche
+  const findNearestGarage = (userLat, userLon) => {
+    let nearestGarage = garages[0];
+    let minDistance = Infinity;
+
+    garages.forEach(garage => {
+      const distance = calculateDistance(
+        userLat,
+        userLon,
+        garage.coordinates[1],
+        garage.coordinates[0]
+      );
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestGarage = garage;
+      }
+    });
+
+    return nearestGarage;
+  };
+
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -120,10 +153,40 @@ function MapComponent() {
     // Écouter l'événement de géolocalisation
     geolocateControl.on('geolocate', (e) => {
       const { longitude, latitude } = e.coords;
-      mapRef.current.flyTo({
-        center: [longitude, latitude],
-        zoom: 14,
-        duration: 2000
+      
+      // Trouver le garage le plus proche
+      const nearestGarage = findNearestGarage(latitude, longitude);
+      
+      // Créer les bounds pour inclure la position de l'utilisateur et le garage le plus proche
+      const bounds = new mapboxgl.LngLatBounds()
+        .extend([longitude, latitude])
+        .extend(nearestGarage.coordinates);
+
+      // Ajouter un padding pour une meilleure visualisation
+      const padding = {
+        top: 50,
+        bottom: 50,
+        left: 50,
+        right: 50
+      };
+
+      // Ajuster le zoom en fonction de la distance
+      const distance = calculateDistance(
+        latitude,
+        longitude,
+        nearestGarage.coordinates[1],
+        nearestGarage.coordinates[0]
+      );
+
+      // Calculer le zoom en fonction de la distance
+      let zoom = 14; // Zoom par défaut
+      if (distance > 10) zoom = 12;
+      if (distance > 20) zoom = 11;
+      if (distance > 30) zoom = 10;
+
+      mapRef.current.fitBounds(bounds, {
+        padding,
+        maxZoom: zoom
       });
     });
 
