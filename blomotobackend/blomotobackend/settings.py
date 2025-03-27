@@ -76,10 +76,15 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://blomoto-nine.vercel.app/",
+    "https://blomoto-gamma.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# Ajout des configurations pour autoriser toutes les requêtes
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_METHODS = True
+CORS_ALLOW_ALL_HEADERS = True
 
 AUTHENTICATION_BACKENDS = ['user_app.authentication.EmailOrUsernameAuthBackend']
 

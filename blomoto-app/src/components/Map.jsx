@@ -107,7 +107,7 @@ function MapComponent() {
   }, [garageId]);
 
   useEffect(() => {
-    mapboxgl.accessToken = 'pk.eyJ1IjoibmVsMzEiLCJhIjoiY204bjc0bWJ1MDJyYTJpczVxZW81dXNmcyJ9.ELBCK7CT4kid8H9wRwVYMA';
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
