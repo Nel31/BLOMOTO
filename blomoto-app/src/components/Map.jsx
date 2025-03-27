@@ -93,6 +93,7 @@ function MapComponent() {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const navigate = useNavigate();
+  const markersRef = useRef([]); // Pour stocker les références des marqueurs
 
   // Fonction pour calculer la distance entre deux points
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -188,6 +189,16 @@ function MapComponent() {
         padding,
         maxZoom: zoom
       });
+
+      // Trouver et ouvrir la popup du garage le plus proche
+      const nearestMarker = markersRef.current.find(marker => 
+        marker.getLngLat().lng === nearestGarage.coordinates[0] && 
+        marker.getLngLat().lat === nearestGarage.coordinates[1]
+      );
+      
+      if (nearestMarker) {
+        nearestMarker.togglePopup();
+      }
     });
 
     mapRef.current.on('load', () => {
@@ -197,7 +208,7 @@ function MapComponent() {
         el.className = 'marker';
         Object.assign(el.style, markerStyles.marker);
 
-        new mapboxgl.Marker(el)
+        const marker = new mapboxgl.Marker(el)
           .setLngLat(garage.coordinates)
           .setPopup(
             new mapboxgl.Popup({ 
@@ -237,6 +248,9 @@ function MapComponent() {
               `)
           )
           .addTo(mapRef.current);
+
+        // Stocker la référence du marqueur
+        markersRef.current.push(marker);
       });
 
       // Lancer la géolocalisation dès que la carte est chargée
