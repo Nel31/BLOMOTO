@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const UserProfile = ({ userId }) => {
   const [user, setUser] = useState(null);
@@ -10,7 +10,7 @@ const UserProfile = ({ userId }) => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/user_app/users/1/`)
+      .get(`https://blomoto.pythonanywhere.com/user_app/users/1/`)
       .then((response) => {
         setUser(response.data);
         setFormData(response.data);
@@ -30,7 +30,7 @@ const UserProfile = ({ userId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .put(`http://127.0.0.1:8000/user_app/users/1/`, formData)
+      .put(`https://blomoto.pythonanywhere.com/user_app/users/1/`, formData)
       .then((response) => {
         setUser(response.data);
         setEditMode(false);
@@ -51,7 +51,7 @@ const UserProfile = ({ userId }) => {
           Profil de {user.username}
         </h2>
         <img
-          src={user.profile_picture ? `http://127.0.0.1:8000${user.profile_picture}` : "/default_avatar.png"}
+          src={user.profile_picture ? `https://blomoto.pythonanywhere.com${user.profile_picture}` : "/default_avatar.png"}
           alt="Profile"
           className="w-24 h-24 rounded-full mx-auto mt-4"
         />

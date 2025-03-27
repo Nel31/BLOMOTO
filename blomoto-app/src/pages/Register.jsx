@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -38,7 +37,7 @@ const Register = () => {
     };
   
     try {
-      const response = await fetch("http://127.0.0.1:8000/user_app/register/", {
+      const response = await fetch("https://blomoto.pythonanywhere.com/user_app/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
