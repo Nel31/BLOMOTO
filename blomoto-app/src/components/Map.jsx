@@ -190,9 +190,6 @@ function MapComponent() {
       });
     });
 
-    // Déclencher automatiquement la géolocalisation
-    geolocateControl.trigger();
-
     mapRef.current.on('load', () => {
       // Add markers for each garage
       garages.forEach(garage => {
@@ -241,6 +238,9 @@ function MapComponent() {
           )
           .addTo(mapRef.current);
       });
+
+      // Lancer la géolocalisation dès que la carte est chargée
+      geolocateControl.trigger();
     });
 
     return () => {
