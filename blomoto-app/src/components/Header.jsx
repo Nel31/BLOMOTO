@@ -1,17 +1,32 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import tikTok from '../assets/3.webp';
 import insta from '../assets/images.png';
 import face from '../assets/face.avif';
-import { Phone, Mail, Globe, MessageCircle } from 'lucide-react';
+import { Phone, Mail, Globe, MessageCircle, LogOut, User, Settings } from 'lucide-react';
 import logo from '../assets/5.png';
+import { useAuth } from '../context/AuthContext';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, isAdmin, isGaragiste, logout } = useAuth();
 
   const isActive = (path) => {
     return location.pathname === path;
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsMenuOpen(false);
+  };
+
+  const getDashboardLink = () => {
+    if (isAdmin()) return '/admin/dashboard';
+    if (isGaragiste()) return '/garagiste/dashboard';
+    return '/profile';
   };
 
   return (
@@ -69,22 +84,38 @@ function Header() {
                   Contact
                 </Link>
               </li>
-              <li>
-                <Link 
-                  to="/login" 
-                  className={`font-medium text-xl ${isActive('/login') ? 'text-black font-semibold' : 'text-blue-600'} hover:text-black transition-colors duration-200`}
-                >
-                  Mon compte
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/garage/1/dashboard" 
-                  className={`font-medium text-xl ${isActive('/garage/1/dashboard') ? 'text-black font-semibold' : 'text-blue-600'} hover:text-black transition-colors duration-200`}
-                >
-                  Tableau de bord
-                </Link>
-              </li>
+              
+              {/* Menu conditionnel selon l'authentification */}
+              {isAuthenticated() ? (
+                <>
+                  <li>
+                    <Link 
+                      to={getDashboardLink()} 
+                      className={`font-medium text-xl ${isActive(getDashboardLink()) ? 'text-black font-semibold' : 'text-blue-600'} hover:text-black transition-colors duration-200`}
+                    >
+                      {isAdmin() ? 'Admin' : isGaragiste() ? 'Mon Garage' : 'Mon Compte'}
+                    </Link>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={handleLogout}
+                      className="font-medium text-xl text-red-600 hover:text-red-800 transition-colors duration-200 flex items-center gap-2"
+                    >
+                      <LogOut size={20} />
+                      Déconnexion
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <Link 
+                    to="/login" 
+                    className={`font-medium text-xl ${isActive('/login') ? 'text-black font-semibold' : 'text-blue-600'} hover:text-black transition-colors duration-200`}
+                  >
+                    Se connecter
+                  </Link>
+                </li>
+              )}
             </ul>
           </nav>
 
@@ -149,24 +180,40 @@ function Header() {
                   Contact
                 </Link>
               </li>
-              <li>
-                <Link 
-                  to="/login" 
-                  className={`block font-medium text-lg py-2 px-3 rounded-md ${isActive('/login') ? 'bg-blue-50 text-blue-700' : 'text-blue-600'} hover:bg-blue-50 transition-colors duration-200`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Mon compte
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/garage/1/dashboard" 
-                  className={`block font-medium text-lg py-2 px-3 rounded-md ${isActive('/garage/1/dashboard') ? 'bg-blue-50 text-blue-700' : 'text-blue-600'} hover:bg-blue-50 transition-colors duration-200`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Tableau de bord
-                </Link>
-              </li>
+              
+              {/* Menu conditionnel selon l'authentification */}
+              {isAuthenticated() ? (
+                <>
+                  <li>
+                    <Link 
+                      to={getDashboardLink()} 
+                      className={`block font-medium text-lg py-2 px-3 rounded-md ${isActive(getDashboardLink()) ? 'bg-blue-50 text-blue-700' : 'text-blue-600'} hover:bg-blue-50 transition-colors duration-200`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {isAdmin() ? 'Admin' : isGaragiste() ? 'Mon Garage' : 'Mon Compte'}
+                    </Link>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={handleLogout}
+                      className="block font-medium text-lg py-2 px-3 rounded-md text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center gap-2"
+                    >
+                      <LogOut size={20} />
+                      Déconnexion
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <Link 
+                    to="/login" 
+                    className={`block font-medium text-lg py-2 px-3 rounded-md ${isActive('/login') ? 'bg-blue-50 text-blue-700' : 'text-blue-600'} hover:bg-blue-50 transition-colors duration-200`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Se connecter
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         )}
