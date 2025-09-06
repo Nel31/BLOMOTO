@@ -51,6 +51,14 @@ function GaragisteDashboard() {
     { id: 4, name: 'Réparation freins', price: '150€', duration: '3h', active: false }
   ];
 
+  const clients = [
+    { id: 1, name: 'Jean Dupont', email: 'jean@email.com', phone: '06 12 34 56 78', totalAppointments: 5, lastVisit: '2024-01-15', rating: 4.5 },
+    { id: 2, name: 'Marie Martin', email: 'marie@email.com', phone: '06 98 76 54 32', totalAppointments: 3, lastVisit: '2024-01-10', rating: 5.0 },
+    { id: 3, name: 'Pierre Durand', email: 'pierre@email.com', phone: '06 55 44 33 22', totalAppointments: 8, lastVisit: '2024-01-18', rating: 4.2 },
+    { id: 4, name: 'Sophie Bernard', email: 'sophie@email.com', phone: '06 11 22 33 44', totalAppointments: 2, lastVisit: '2024-01-05', rating: 4.8 },
+    { id: 5, name: 'Lucas Moreau', email: 'lucas@email.com', phone: '06 77 88 99 00', totalAppointments: 1, lastVisit: '2024-01-20', rating: 5.0 }
+  ];
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -302,6 +310,289 @@ function GaragisteDashboard() {
     </div>
   );
 
+  const renderClients = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Mes clients</h2>
+        <div className="flex gap-4">
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <option>Tous les clients</option>
+            <option>Clients fidèles (5+ RDV)</option>
+            <option>Nouveaux clients</option>
+            <option>Clients inactifs</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Statistiques des clients */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center">
+            <Users className="h-8 w-8 text-blue-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Total clients</p>
+              <p className="text-2xl font-bold text-gray-900">{clients.length}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center">
+            <Star className="h-8 w-8 text-yellow-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Note moyenne</p>
+              <p className="text-2xl font-bold text-gray-900">4.7</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center">
+            <Calendar className="h-8 w-8 text-green-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">RDV ce mois</p>
+              <p className="text-2xl font-bold text-gray-900">12</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center">
+            <CheckCircle className="h-8 w-8 text-purple-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Clients fidèles</p>
+              <p className="text-2xl font-bold text-gray-900">{clients.filter(c => c.totalAppointments >= 5).length}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Liste des clients */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Rechercher un client..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <button className="px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 hover:bg-gray-50">
+              <Filter size={20} />
+              Filtres
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RDV</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dernière visite</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {clients.map(client => (
+                <tr key={client.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                        <Users size={20} className="text-gray-600" />
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{client.name}</div>
+                        <div className="text-sm text-gray-500">{client.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{client.phone}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{client.totalAppointments}</div>
+                    <div className="text-xs text-gray-500">RDV total</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{client.lastVisit}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 text-yellow-500 mr-1" />
+                      <span className="text-sm font-medium">{client.rating}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button className="text-blue-600 hover:text-blue-900">
+                        <Eye size={16} />
+                      </button>
+                      <button className="text-green-600 hover:text-green-900">
+                        <Edit size={16} />
+                      </button>
+                      <button className="text-purple-600 hover:text-purple-900">
+                        <Phone size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSettings = () => (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">Paramètres du garage</h2>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Informations du garage */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Informations du garage</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nom du garage</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue={garageInfo.name}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
+              <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows={3}
+                defaultValue={garageInfo.address}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={garageInfo.phone}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={garageInfo.email}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Horaires d'ouverture */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Horaires d'ouverture</h3>
+          <div className="space-y-4">
+            {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].map((day, index) => (
+              <div key={day} className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700 w-20">{day}</span>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="time"
+                    className="px-2 py-1 border border-gray-300 rounded text-sm"
+                    defaultValue={index < 5 ? "08:00" : index === 5 ? "09:00" : ""}
+                    disabled={index === 6}
+                  />
+                  <span className="text-gray-500">-</span>
+                  <input
+                    type="time"
+                    className="px-2 py-1 border border-gray-300 rounded text-sm"
+                    defaultValue={index < 5 ? "18:00" : index === 5 ? "17:00" : ""}
+                    disabled={index === 6}
+                  />
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 text-blue-600"
+                    defaultChecked={index !== 6}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Services proposés */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Services proposés</h3>
+          <div className="space-y-3">
+            {services.map(service => (
+              <div key={service.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <div className="font-medium">{service.name}</div>
+                  <div className="text-sm text-gray-500">{service.price} - {service.duration}</div>
+                </div>
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600"
+                  defaultChecked={service.active}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Paramètres de réservation */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Paramètres de réservation</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Durée minimum entre RDV (minutes)</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="30"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Délai de réservation (jours)</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="7"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Capacité maximale par jour</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="20"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Accepter les RDV en ligne</span>
+              <input type="checkbox" className="h-4 w-4 text-blue-600" defaultChecked />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Boutons d'action */}
+      <div className="flex justify-end space-x-4">
+        <button className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+          Annuler
+        </button>
+        <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          Sauvegarder
+        </button>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
@@ -311,9 +602,9 @@ function GaragisteDashboard() {
       case 'services':
         return renderServices();
       case 'clients':
-        return <div className="text-center py-12 text-gray-500">Gestion des clients - En développement</div>;
+        return renderClients();
       case 'settings':
-        return <div className="text-center py-12 text-gray-500">Paramètres du garage - En développement</div>;
+        return renderSettings();
       default:
         return renderOverview();
     }

@@ -49,6 +49,22 @@ function AdminDashboard() {
     { id: 3, name: 'Pierre Durand', email: 'pierre@email.com', garage: null, status: 'available' }
   ];
 
+  const services = [
+    { id: 1, name: 'Révision complète', description: 'Contrôle technique et entretien complet', price: '120€', duration: '2h', category: 'Entretien', active: true },
+    { id: 2, name: 'Changement pneus', description: 'Montage et équilibrage de pneus', price: '80€', duration: '1h', category: 'Pneus', active: true },
+    { id: 3, name: 'Diagnostic électronique', description: 'Diagnostic des systèmes électroniques', price: '60€', duration: '30min', category: 'Diagnostic', active: true },
+    { id: 4, name: 'Réparation freins', description: 'Changement plaquettes et disques', price: '150€', duration: '3h', category: 'Sécurité', active: false },
+    { id: 5, name: 'Climatisation', description: 'Recharge et réparation climatisation', price: '90€', duration: '1h30', category: 'Confort', active: true }
+  ];
+
+  const appointments = [
+    { id: 1, client: 'Jean Dupont', garage: 'Garage Auto Plus', service: 'Révision complète', date: '2024-01-20', time: '09:00', status: 'confirmed', phone: '06 12 34 56 78' },
+    { id: 2, client: 'Marie Martin', garage: 'Auto Service Pro', service: 'Changement pneus', date: '2024-01-20', time: '10:30', status: 'pending', phone: '06 98 76 54 32' },
+    { id: 3, client: 'Pierre Durand', garage: 'Garage Auto Plus', service: 'Diagnostic', date: '2024-01-21', time: '14:00', status: 'completed', phone: '06 55 44 33 22' },
+    { id: 4, client: 'Sophie Bernard', garage: 'Mécanique Express', service: 'Réparation freins', date: '2024-01-21', time: '16:30', status: 'cancelled', phone: '06 11 22 33 44' },
+    { id: 5, client: 'Lucas Moreau', garage: 'Auto Service Pro', service: 'Climatisation', date: '2024-01-22', time: '11:00', status: 'confirmed', phone: '06 77 88 99 00' }
+  ];
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -57,6 +73,7 @@ function AdminDashboard() {
 
   const [showCreateGarage, setShowCreateGarage] = useState(false);
   const [showCreateGaragiste, setShowCreateGaragiste] = useState(false);
+  const [showCreateService, setShowCreateService] = useState(false);
   const [newGarage, setNewGarage] = useState({
     name: '',
     address: '',
@@ -69,6 +86,13 @@ function AdminDashboard() {
     email: '',
     phone: '',
     garage_id: ''
+  });
+  const [newService, setNewService] = useState({
+    name: '',
+    description: '',
+    price: '',
+    duration: '',
+    category: ''
   });
 
   const handleCreateGarage = () => {
@@ -83,6 +107,13 @@ function AdminDashboard() {
     console.log('Créer garagiste:', newGaragiste);
     setShowCreateGaragiste(false);
     setNewGaragiste({ first_name: '', last_name: '', email: '', phone: '', garage_id: '' });
+  };
+
+  const handleCreateService = () => {
+    // Ici on ferait l'appel API pour créer le service
+    console.log('Créer service:', newService);
+    setShowCreateService(false);
+    setNewService({ name: '', description: '', price: '', duration: '', category: '' });
   };
 
   const tabs = [
@@ -589,6 +620,649 @@ function AdminDashboard() {
     </div>
   );
 
+  const renderServices = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Gestion des services</h2>
+        <button 
+          onClick={() => setShowCreateService(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
+        >
+          <Plus size={20} />
+          Créer un service
+        </button>
+      </div>
+
+      {/* Formulaire de création de service */}
+      {showCreateService && (
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Créer un nouveau service</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nom du service</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={newService.name}
+                onChange={(e) => setNewService({...newService, name: e.target.value})}
+                placeholder="Nom du service"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={newService.category}
+                onChange={(e) => setNewService({...newService, category: e.target.value})}
+              >
+                <option value="">Sélectionner une catégorie</option>
+                <option value="Entretien">Entretien</option>
+                <option value="Pneus">Pneus</option>
+                <option value="Diagnostic">Diagnostic</option>
+                <option value="Sécurité">Sécurité</option>
+                <option value="Confort">Confort</option>
+                <option value="Réparation">Réparation</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Prix</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={newService.price}
+                onChange={(e) => setNewService({...newService, price: e.target.value})}
+                placeholder="120€"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Durée</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={newService.duration}
+                onChange={(e) => setNewService({...newService, duration: e.target.value})}
+                placeholder="2h"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows={3}
+                value={newService.description}
+                onChange={(e) => setNewService({...newService, description: e.target.value})}
+                placeholder="Description du service"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-3 mt-6">
+            <button
+              onClick={() => setShowCreateService(false)}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={handleCreateService}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Créer le service
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Liste des services */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Rechercher un service..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <button className="px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 hover:bg-gray-50">
+              <Filter size={20} />
+              Filtres
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durée</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {services.map(service => (
+                <tr key={service.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{service.name}</div>
+                      <div className="text-sm text-gray-500">{service.description}</div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                      {service.category}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{service.price}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{service.duration}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      service.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {service.active ? 'Actif' : 'Inactif'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button className="text-blue-600 hover:text-blue-900">
+                        <Eye size={16} />
+                      </button>
+                      <button className="text-green-600 hover:text-green-900">
+                        <Edit size={16} />
+                      </button>
+                      <button className="text-red-600 hover:text-red-900">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderAppointments = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Gestion des rendez-vous</h2>
+        <div className="flex gap-4">
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <option>Tous les garages</option>
+            <option>Garage Auto Plus</option>
+            <option>Auto Service Pro</option>
+            <option>Mécanique Express</option>
+          </select>
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <option>Tous les statuts</option>
+            <option>Confirmé</option>
+            <option>En attente</option>
+            <option>Terminé</option>
+            <option>Annulé</option>
+          </select>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2">
+            <Plus size={20} />
+            Nouveau RDV
+          </button>
+        </div>
+      </div>
+
+      {/* Statistiques avancées des RDV */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center">
+            <Calendar className="h-8 w-8 text-blue-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Total RDV</p>
+              <p className="text-2xl font-bold text-gray-900">{appointments.length}</p>
+              <p className="text-xs text-green-600">+12% vs mois dernier</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center">
+            <CheckCircle className="h-8 w-8 text-green-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Confirmés</p>
+              <p className="text-2xl font-bold text-gray-900">{appointments.filter(a => a.status === 'confirmed').length}</p>
+              <p className="text-xs text-gray-500">85% du total</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center">
+            <Clock className="h-8 w-8 text-yellow-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">En attente</p>
+              <p className="text-2xl font-bold text-gray-900">{appointments.filter(a => a.status === 'pending').length}</p>
+              <p className="text-xs text-yellow-600">Nécessite action</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center">
+            <XCircle className="h-8 w-8 text-red-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Annulés</p>
+              <p className="text-2xl font-bold text-gray-900">{appointments.filter(a => a.status === 'cancelled').length}</p>
+              <p className="text-xs text-red-600">-5% vs mois dernier</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Graphiques et analyses */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Graphique des RDV par jour */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">RDV par jour (7 derniers jours)</h3>
+          <div className="h-64 flex items-end justify-between space-x-2">
+            {[12, 8, 15, 20, 18, 14, 16].map((value, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <div 
+                  className="bg-blue-500 rounded-t w-8 mb-2"
+                  style={{ height: `${(value / 20) * 200}px` }}
+                ></div>
+                <span className="text-xs text-gray-500">
+                  {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'][index]}
+                </span>
+                <span className="text-xs font-medium">{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top des garages */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Top des garages</h3>
+          <div className="space-y-4">
+            {[
+              { name: 'Garage Auto Plus', rdv: 45, revenue: '2,400€' },
+              { name: 'Auto Service Pro', rdv: 38, revenue: '1,900€' },
+              { name: 'Mécanique Express', rdv: 22, revenue: '1,100€' }
+            ].map((garage, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <span className="text-sm font-bold text-blue-600">{index + 1}</span>
+                  </div>
+                  <div>
+                    <div className="font-medium">{garage.name}</div>
+                    <div className="text-sm text-gray-500">{garage.rdv} RDV</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-semibold text-green-600">{garage.revenue}</div>
+                  <div className="text-xs text-gray-500">Chiffre d'affaires</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Services les plus demandés */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold mb-4">Services les plus demandés</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { name: 'Révision complète', count: 25, percentage: 35 },
+            { name: 'Changement pneus', count: 18, percentage: 25 },
+            { name: 'Diagnostic', count: 15, percentage: 20 },
+            { name: 'Réparation freins', count: 8, percentage: 12 },
+            { name: 'Climatisation', count: 6, percentage: 8 }
+          ].map((service, index) => (
+            <div key={index} className="p-4 border border-gray-200 rounded-lg">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-medium">{service.name}</span>
+                <span className="text-sm text-gray-500">{service.count} RDV</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full" 
+                  style={{ width: `${service.percentage}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-gray-500 mt-1">{service.percentage}% du total</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Calendrier des RDV */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold mb-4">Calendrier des RDV</h3>
+        <div className="grid grid-cols-7 gap-2 mb-4">
+          {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => (
+            <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+              {day}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-2">
+          {Array.from({ length: 28 }, (_, i) => {
+            const day = i + 1;
+            const hasAppointments = Math.random() > 0.7;
+            const appointmentCount = hasAppointments ? Math.floor(Math.random() * 5) + 1 : 0;
+            
+            return (
+              <div 
+                key={day} 
+                className={`h-16 border border-gray-200 rounded-lg p-2 cursor-pointer hover:bg-blue-50 ${
+                  hasAppointments ? 'bg-blue-50' : ''
+                }`}
+              >
+                <div className="text-sm font-medium">{day}</div>
+                {hasAppointments && (
+                  <div className="text-xs text-blue-600 font-medium">
+                    {appointmentCount} RDV
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Liste des RDV avec filtres avancés */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Rechercher un rendez-vous..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option>Tous les garages</option>
+                <option>Garage Auto Plus</option>
+                <option>Auto Service Pro</option>
+                <option>Mécanique Express</option>
+              </select>
+              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option>Tous les statuts</option>
+                <option>Confirmé</option>
+                <option>En attente</option>
+                <option>Terminé</option>
+                <option>Annulé</option>
+              </select>
+              <input
+                type="date"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="Date"
+              />
+              <button className="px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 hover:bg-gray-50">
+                <Filter size={20} />
+                Filtres
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Garage</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Heure</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {appointments.map(appointment => (
+                <tr key={appointment.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                        <Users size={20} className="text-gray-600" />
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{appointment.client}</div>
+                        <div className="text-sm text-gray-500">{appointment.phone}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{appointment.garage}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{appointment.service}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="font-medium">{appointment.date}</div>
+                    <div className="text-gray-500">{appointment.time}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                      appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      appointment.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {appointment.status === 'confirmed' ? 'Confirmé' :
+                       appointment.status === 'pending' ? 'En attente' :
+                       appointment.status === 'completed' ? 'Terminé' : 'Annulé'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {Math.floor(Math.random() * 200) + 50}€
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button className="text-blue-600 hover:text-blue-900" title="Voir détails">
+                        <Eye size={16} />
+                      </button>
+                      <button className="text-green-600 hover:text-green-900" title="Modifier">
+                        <Edit size={16} />
+                      </button>
+                      <button className="text-purple-600 hover:text-purple-900" title="Réassigner">
+                        <Settings size={16} />
+                      </button>
+                      <button className="text-red-600 hover:text-red-900" title="Annuler">
+                        <XCircle size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="px-6 py-4 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-700">
+              Affichage de 1 à {appointments.length} sur {appointments.length} résultats
+            </div>
+            <div className="flex space-x-2">
+              <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
+                Précédent
+              </button>
+              <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm">
+                1
+              </button>
+              <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
+                2
+              </button>
+              <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
+                Suivant
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSettings = () => (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">Paramètres de la plateforme</h2>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Paramètres généraux */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Paramètres généraux</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nom de la plateforme</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="BLOMOTO"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email de contact</label>
+              <input
+                type="email"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="contact@blomoto.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone de contact</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="01 23 45 67 89"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
+              <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows={3}
+                defaultValue="123 Rue de la Paix, 75001 Paris"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Paramètres de réservation */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Paramètres de réservation</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Heure d'ouverture</label>
+              <input
+                type="time"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="08:00"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Heure de fermeture</label>
+              <input
+                type="time"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="18:00"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Durée minimum entre RDV (minutes)</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="30"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Délai de réservation (jours)</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="7"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Paramètres de notification */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Notifications</h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Email de confirmation</span>
+              <input type="checkbox" className="h-4 w-4 text-blue-600" defaultChecked />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">SMS de rappel</span>
+              <input type="checkbox" className="h-4 w-4 text-blue-600" defaultChecked />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Notification 24h avant</span>
+              <input type="checkbox" className="h-4 w-4 text-blue-600" defaultChecked />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Notification 1h avant</span>
+              <input type="checkbox" className="h-4 w-4 text-blue-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Paramètres de sécurité */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Sécurité</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Durée de session (heures)</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="24"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tentatives de connexion max</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                defaultValue="5"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Authentification 2FA</span>
+              <input type="checkbox" className="h-4 w-4 text-blue-600" />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Logs d'activité</span>
+              <input type="checkbox" className="h-4 w-4 text-blue-600" defaultChecked />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Boutons d'action */}
+      <div className="flex justify-end space-x-4">
+        <button className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+          Annuler
+        </button>
+        <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          Sauvegarder
+        </button>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
@@ -600,11 +1274,11 @@ function AdminDashboard() {
       case 'garagistes':
         return renderGaragistes();
       case 'services':
-        return <div className="text-center py-12 text-gray-500">Gestion des services - En développement</div>;
+        return renderServices();
       case 'appointments':
-        return <div className="text-center py-12 text-gray-500">Gestion des rendez-vous - En développement</div>;
+        return renderAppointments();
       case 'settings':
-        return <div className="text-center py-12 text-gray-500">Paramètres - En développement</div>;
+        return renderSettings();
       default:
         return renderOverview();
     }
