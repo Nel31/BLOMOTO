@@ -16,8 +16,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ServicesList from './pages/Services/ServiceList';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import AdminDashboardSimple from './pages/Admin/AdminDashboardSimple';
 import GaragisteDashboard from './pages/Garagiste/GaragisteDashboard';
 import TestAuth from './pages/TestAuth';
+import TestPage from './pages/TestPage';
+import Diagnostic from './pages/Diagnostic';
+import AppointmentsTest from './pages/Admin/AppointmentsTest';
 
 function App() {
   // Définition des couleurs principales pour le thème du site
@@ -93,6 +97,27 @@ function App() {
                 <>
                   <Header />
                   <TestAuth />
+                  <Footer />
+                </>
+              } />
+              <Route path="/test" element={
+                <>
+                  <Header />
+                  <TestPage />
+                  <Footer />
+                </>
+              } />
+              <Route path="/diagnostic" element={
+                <>
+                  <Header />
+                  <Diagnostic />
+                  <Footer />
+                </>
+              } />
+              <Route path="/test-appointments" element={
+                <>
+                  <Header />
+                  <AppointmentsTest />
                   <Footer />
                 </>
               } />

@@ -13,7 +13,11 @@ import {
   Eye,
   Search,
   Filter,
-  LogOut
+  LogOut,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Settings as SettingsIcon
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
