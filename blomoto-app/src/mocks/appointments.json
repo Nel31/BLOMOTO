@@ -1,0 +1,6 @@
+[
+  { "id": 101, "garage_id": 1, "client_id": 1001, "service_id": 1, "datetime": "2025-10-08T09:00:00Z", "status": "scheduled" },
+  { "id": 102, "garage_id": 1, "client_id": 1002, "service_id": 2, "datetime": "2025-10-08T11:00:00Z", "status": "scheduled" },
+  { "id": 103, "garage_id": 2, "client_id": 1003, "service_id": 3, "datetime": "2025-10-09T14:30:00Z", "status": "completed" }
+]
+

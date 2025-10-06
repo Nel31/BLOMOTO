@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "Garage Alpha", "city": "Cotonou", "address": "Rue 123", "avg_rating": 4.5, "services_count": 6 },
+  { "id": 2, "name": "Garage Beta", "city": "Porto-Novo", "address": "Avenue X", "avg_rating": 4.2, "services_count": 4 },
+  { "id": 3, "name": "Garage Gamma", "city": "Parakou", "address": "Boulevard Y", "avg_rating": 4.8, "services_count": 8 }
+]
+

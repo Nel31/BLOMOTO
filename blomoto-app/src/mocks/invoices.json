@@ -1,0 +1,26 @@
+[
+  {
+    "id": 5001,
+    "garage_id": 1,
+    "client_id": 1001,
+    "total_amount": 45000,
+    "status": "paid",
+    "created_at": "2025-10-01",
+    "items": [
+      { "service_id": 1, "name": "Vidange", "quantity": 1, "unit_price": 15000 },
+      { "service_id": 2, "name": "Freinage", "quantity": 1, "unit_price": 30000 }
+    ]
+  },
+  {
+    "id": 5002,
+    "garage_id": 2,
+    "client_id": 1003,
+    "total_amount": 20000,
+    "status": "pending",
+    "created_at": "2025-10-03",
+    "items": [
+      { "service_id": 3, "name": "Diagnostic", "quantity": 1, "unit_price": 20000 }
+    ]
+  }
+]
+
