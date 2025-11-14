@@ -1,0 +1,32 @@
+1. Application mobile Flutter (prioritaire)
+Compléter les écrans existants :
+GarageDetailScreen : ajouter services, carte, avis, réservation
+AppointmentListScreen : améliorer l'affichage et les actions
+ProfileScreen : édition de profil
+Fonctionnalités manquantes :
+Réservation depuis le mobile
+Favoris sur mobile
+Notifications push
+Géolocalisation réelle (intégration Maps)
+Système d'avis depuis le mobile
+2. Fonctionnalités avancées web/mobile
+Paiement en ligne (Stripe/PayPal)
+Chat en direct client ↔ garagiste
+Notifications email/SMS pour rendez-vous
+Rappels de rendez-vous (notifications)
+Upload d'images pour garages (Cloudinary)
+Upload de photos de véhicule lors de la réservation
+3. Améliorations UX/UI
+Design responsive pour mobile (web)
+Mode sombre
+Recherche avancée avec filtres multiples
+Tri et comparaison de garages
+Partage de garages sur réseaux sociaux
+4. Fonctionnalités métier
+Système de fidélité/points
+Recommandations personnalisées
+Historique des véhicules
+Carnet d'entretien numérique
+Devis en ligne
+Suivi de réparation en temps réel
+Quelle partie voulez-vous prioriser ? Je recommande de compléter d'abord l'application mobile Flutter.
