@@ -1,6 +1,0 @@
-[
-  { "id": 9001, "username": "admin", "role": "admin", "first_name": "Admin" },
-  { "id": 9002, "username": "garagiste1", "role": "garagiste", "first_name": "Gara" },
-  { "id": 9003, "username": "client1", "role": "client", "first_name": "Client" }
-]
-

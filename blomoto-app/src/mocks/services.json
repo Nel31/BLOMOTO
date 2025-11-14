@@ -1,6 +1,0 @@
-[
-  { "id": 1, "garage_id": 1, "name": "Vidange", "price": 15000, "duration_min": 45 },
-  { "id": 2, "garage_id": 1, "name": "Freinage", "price": 30000, "duration_min": 60 },
-  { "id": 3, "garage_id": 2, "name": "Diagnostic", "price": 20000, "duration_min": 40 }
-]
-

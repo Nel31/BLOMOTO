@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --color-noir: #000000;
+  --color-noir-50: #1a1a1a;
+  --color-noir-100: #333333;
+  --color-noir-200: #4d4d4d;
+  --color-noir-300: #666666;
+  --color-noir-400: #808080;
+  --color-noir-500: #000000;
+  --color-noir-600: #000000;
+  --color-noir-700: #000000;
+  --color-noir-800: #000000;
+  --color-noir-900: #000000;
+
+  --color-rouge: #DC2626;
+  --color-rouge-50: #FEE2E2;
+  --color-rouge-100: #FECACA;
+  --color-rouge-200: #FCA5A5;
+  --color-rouge-300: #F87171;
+  --color-rouge-400: #EF4444;
+  --color-rouge-500: #DC2626;
+  --color-rouge-600: #B91C1C;
+  --color-rouge-700: #991B1B;
+  --color-rouge-800: #7F1D1D;
+  --color-rouge-900: #7F1D1D;
+
+  --color-racine: #D2B48C;
+  --color-racine-50: #F5F1EB;
+  --color-racine-100: #E8DED0;
+  --color-racine-200: #D2B48C;
+  --color-racine-300: #C49D6A;
+  --color-racine-400: #B88648;
+  --color-racine-500: #A06D26;
+  --color-racine-600: #8B5A1F;
+  --color-racine-700: #764719;
+  --color-racine-800: #613412;
+  --color-racine-900: #4C280C;
+
+  --color-rose: #EC4899;
+  --color-rose-50: #FDF2F8;
+  --color-rose-100: #FCE7F3;
+  --color-rose-200: #FBCFE8;
+  --color-rose-300: #F9A8D4;
+  --color-rose-400: #F472B6;
+  --color-rose-500: #EC4899;
+  --color-rose-600: #DB2777;
+  --color-rose-700: #BE185D;
+  --color-rose-800: #9F1239;
+  --color-rose-900: #831843;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animations personnalisées */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Amélioration des transitions globales */
+* {
+  transition-property: color, background-color, border-color, transform, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Amélioration du focus pour l'accessibilité */
+:focus-visible {
+  outline: 2px solid var(--color-rouge-500);
+  outline-offset: 2px;
+}
+
+/* Amélioration des boutons */
+button, .btn {
+  position: relative;
+  overflow: hidden;
+}
+
+button::before, .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:hover::before, .btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+

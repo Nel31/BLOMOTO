@@ -1,6 +1,0 @@
-[
-  { "id": 7001, "garage_id": 1, "client_id": 1001, "rating": 5, "comment": "Service impeccable", "created_at": "2025-09-30" },
-  { "id": 7002, "garage_id": 1, "client_id": 1002, "rating": 4, "comment": "Rapide et efficace", "created_at": "2025-10-02" },
-  { "id": 7003, "garage_id": 2, "client_id": 1003, "rating": 4, "comment": "Bon diagnostic", "created_at": "2025-10-03" }
-]
-

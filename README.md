@@ -1,111 +1,300 @@
-# **BLOMOTO - Gestion numérique des garages automobiles** 🚗💻
+# 🚗 Promoto - Application de mise en relation Automobilistes ↔ Garages
 
-## **📌 Introduction**
-BLOMOTO est une plateforme web innovante conçue pour simplifier la gestion des garages automobiles. Grâce à un **backend robuste en Django** et un **frontend interactif en React.js**, elle permet aux garages de gérer leurs services, aux clients de prendre rendez-vous facilement et aux administrateurs de superviser l’ensemble du système.
+**Promoto** est une application mobile multiplateforme (Android & iOS) permettant aux automobilistes de trouver rapidement un garage automobile à proximité selon leurs besoins (panne, entretien, urgence, etc.).
 
----
+## 📋 Table des matières
 
-## **🎯 Fonctionnalités principales**
-✅ **Inscription et connexion sécurisées** avec JWT (JSON Web Token).  
-✅ **Gestion des services** : ajout, modification et suppression des prestations offertes par les garages.  
-✅ **Réservation en ligne** avec calendrier intégré et notifications.  
-✅ **Système de rôles** : administrateurs, garagistes et clients avec des permissions spécifiques.  
-✅ **Messagerie intégrée** entre garages et clients pour un suivi efficace.  
-✅ **Interface moderne et responsive** avec **React.js** et **Tailwind CSS**.  
+- [Technologies utilisées](#technologies-utilisées)
+- [Structure du projet](#structure-du-projet)
+- [Installation et démarrage](#installation-et-démarrage)
+- [Configuration](#configuration)
+- [API Endpoints](#api-endpoints)
+- [Fonctionnalités](#fonctionnalités)
+- [Rôles utilisateurs](#rôles-utilisateurs)
+ - [Frontend Web (Admin)](#frontend-web-admin)
 
----
+## 🛠 Technologies utilisées
 
-## **🛠️ Stack technologique**
-### **Frontend** (blomoto-app) 🚀
-- **React.js** : Gestion des interfaces utilisateur.
-- **Vite.js** : Compilation et optimisation rapide du projet.
-- **Tailwind CSS** : Styling moderne et responsive.
-- **Axios** : Gestion des appels API vers le backend.
+### Backend
+- **Node.js** avec **Express.js**
+- **MongoDB** (via Mongoose)
+- **JWT** pour l'authentification
+- **bcrypt** pour le hashage des mots de passe
+- **Cloudinary** pour le stockage d'images (optionnel)
 
-### **Backend** (blomotobackend) ⚙️
-- **Django** : Framework backend robuste et sécurisé.
-- **Django REST Framework** : Création et gestion des API.
-- **SQLite** : Base de données légère et efficace.
-- **JWT (JSON Web Token)** : Authentification sécurisée.
+### Frontend (Mobile)
+- **Flutter** (Dart)
+- **Provider** pour la gestion d'état
+- **Google Maps** pour la géolocalisation
+- **Firebase** pour les notifications push (à configurer)
+- **Dio** pour les appels API
 
----
+## 📁 Structure du projet
 
-## **📂 Structure du projet**
 ```
-blomoto/
-│── blomoto-app/             # Frontend React.js
-│   ├── src/
-│   │   ├── components/      # Composants UI réutilisables
-│   │   ├── pages/           # Pages principales (Accueil, Login, Dashboard...)
-│   │   ├── config/api.js    # Configuration des appels API
-│   ├── public/
-│   ├── package.json         # Dépendances frontend
-│   ├── vite.config.js       # Configuration Vite.js
+PROMOTO/
+├── backend/              # API Node.js/Express
+│   ├── controllers/      # Contrôleurs des routes
+│   ├── models/           # Modèles MongoDB
+│   ├── routes/           # Définition des routes
+│   ├── middleware/       # Middlewares (auth, validation)
+│   ├── utils/            # Utilitaires (upload, token)
+│   ├── server.js         # Point d'entrée du serveur
+│   └── package.json
 │
-│── blomotobackend/          # Backend Django
-│   ├── garage_app/          # Gestion des garages et services
-│   ├── user_app/            # Gestion des utilisateurs et authentification
-│   ├── service_app/         # Gestion des services et prestations
-│   ├── requirements.txt     # Dépendances backend
-│   ├── manage.py            # Commandes Django
+├── mobile/               # Application Flutter
+│   ├── lib/
+│   │   ├── models/       # Modèles de données
+│   │   ├── providers/    # Providers (état)
+│   │   ├── screens/      # Écrans de l'application
+│   │   ├── utils/        # Utilitaires (API, thème)
+│   │   └── main.dart     # Point d'entrée
+│   └── pubspec.yaml
 │
-│── docs/                    # Documentation technique
-│── README.md                # Documentation principale
+└── README.md
 ```
 
----
+## 🚀 Installation et démarrage
 
-## **🚀 Installation et démarrage**
-### **1️⃣ Cloner le projet**
+### Prérequis
+
+- **Node.js** (v18 ou supérieur)
+- **MongoDB** (installation locale ou MongoDB Atlas)
+- **Flutter SDK** (v3.0 ou supérieur)
+- **Git**
+
+### 1. Cloner le projet
+
 ```bash
-$ git clone https://github.com/ton-repo/blomoto.git
-$ cd blomoto
+git clone <url-du-repo>
+cd PROMOTO
 ```
 
-### **2️⃣ Installation du backend** (Django)
+### 2. Backend - Configuration et démarrage
+
 ```bash
-$ cd blomotobackend
-$ pip install -r requirements.txt
-$ python manage.py migrate  # Exécuter les migrations
-$ python manage.py runserver  # Lancer le serveur Django
+# Aller dans le dossier backend
+cd backend
+
+# Installer les dépendances
+npm install
+
+# Créer le fichier .env (copier depuis .env.example)
+cp .env.example .env
+
+# Modifier le fichier .env avec vos configurations
+# - MONGODB_URI: votre URI MongoDB
+# - JWT_SECRET: une clé secrète pour JWT
+# - CLOUDINARY_*: vos clés Cloudinary (optionnel)
+
+# Démarrer le serveur en mode développement
+npm run dev
+
+# Ou en mode production
+npm start
 ```
 
-### **3️⃣ Installation du frontend** (React.js)
+Le serveur backend sera accessible sur `http://localhost:5000`
+
+### 3. Mobile - Configuration et démarrage
+
 ```bash
-$ cd ../blomoto-app
-$ npm install
-$ npm run dev  # Lancer l'application React
+# Aller dans le dossier mobile
+cd mobile
+
+# Installer les dépendances Flutter
+flutter pub get
+
+# Configurer l'URL de l'API dans lib/utils/api_client.dart
+# Modifier la constante baseUrl selon votre environnement
+
+# Lancer l'application sur un émulateur ou appareil
+flutter run
 ```
 
+**Note importante :** Pour la géolocalisation sur Android, ajouter dans `android/app/src/main/AndroidManifest.xml` :
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+```
+
+Pour iOS, configurer `ios/Runner/Info.plist` :
+
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Promoto a besoin de votre localisation pour trouver les garages à proximité</string>
+```
+
+## ⚙️ Configuration
+
+### Variables d'environnement Backend (.env)
+
+```env
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=mongodb://localhost:27017/promoto
+JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRE=30d
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+```
+
+### Configuration de l'API dans Flutter
+
+Modifier `mobile/lib/utils/api_client.dart` :
+
+```dart
+static const String baseUrl = 'http://YOUR_IP_ADDRESS:5000/api';
+// Pour un émulateur Android : utiliser http://10.0.2.2:5000/api
+// Pour un émulateur iOS : utiliser http://localhost:5000/api
+// Pour un appareil physique : utiliser l'IP locale de votre machine
+```
+
+## 📡 API Endpoints
+
+### Authentification
+- `POST /api/auth/register` - Inscription
+- `POST /api/auth/login` - Connexion
+- `GET /api/auth/me` - Profil utilisateur connecté (protégé)
+
+### Utilisateurs
+- `GET /api/users/profile` - Profil (protégé)
+- `PUT /api/users/profile` - Mettre à jour le profil (protégé)
+- `GET /api/users` - Liste des utilisateurs (Admin)
+- `GET /api/users/:id` - Détails utilisateur (Admin)
+
+### Garages
+- `GET /api/garages/nearby?latitude=X&longitude=Y` - Garages à proximité
+- `GET /api/garages` - Liste des garages
+- `GET /api/garages/:id` - Détails d'un garage
+- `GET /api/garages/owner/me` - Garage du garagiste connecté (protégé)
+- `POST /api/garages` - Créer un garage (Admin)
+- `PUT /api/garages/:id` - Mettre à jour (Garagiste/Admin)
+- `DELETE /api/garages/:id` - Supprimer (Admin)
+
+### Services
+- `GET /api/services` - Liste des services
+- `GET /api/services/garage/:garageId` - Services d'un garage
+- `GET /api/services/:id` - Détails d'un service
+- `POST /api/services` - Créer (Garagiste/Admin)
+- `PUT /api/services/:id` - Mettre à jour (Garagiste/Admin)
+- `DELETE /api/services/:id` - Supprimer (Garagiste/Admin)
+
+### Rendez-vous
+- `GET /api/appointments` - Liste (protégé)
+- `GET /api/appointments/client/me` - Rendez-vous du client (protégé)
+- `GET /api/appointments/garage/me` - Rendez-vous du garage (protégé/Garagiste)
+- `POST /api/appointments` - Créer (protégé/Client)
+- `PUT /api/appointments/:id` - Mettre à jour (protégé)
+- `DELETE /api/appointments/:id` - Supprimer (protégé)
+
+### Avis
+- `GET /api/reviews` - Liste des avis
+- `GET /api/reviews/garage/:garageId` - Avis d'un garage
+- `POST /api/reviews` - Créer un avis (protégé/Client)
+- `PUT /api/reviews/:id` - Mettre à jour (protégé)
+- `DELETE /api/reviews/:id` - Supprimer (protégé)
+
+### Admin
+- `GET /api/admin/dashboard` - Statistiques (Admin)
+- `POST /api/admin/garagistes` - Créer compte garagiste (Admin)
+- `GET /api/admin/garagistes` - Liste des garagistes (Admin)
+- `PUT /api/admin/garages/:id/suspend` - Suspendre un garage (Admin)
+- `PUT /api/admin/garages/:id/activate` - Activer un garage (Admin)
+
+## 🖥 Frontend Web (Admin)
+
+### Démarrage
+
+```bash
+cd web
+cp .env.example .env   # VITE_API_BASE_URL=http://localhost:5000/api
+npm install
+npm run dev
+```
+
+L’interface admin sera accessible sur `http://localhost:5173`. Connectez‑vous avec un compte `admin`.
+
+## ✨ Fonctionnalités
+
+### Côté Client
+- ✅ Création de compte / Connexion
+- ✅ Géolocalisation automatique
+- ✅ Recherche de garages à proximité
+- ✅ Consultation des détails du garage
+- ✅ Réservation de rendez-vous
+- ✅ Historique des rendez-vous
+- ✅ Évaluation et avis (à implémenter)
+
+### Côté Garagiste
+- ✅ Connexion (compte créé par l'admin)
+- ✅ Gestion du profil garage (à implémenter complètement)
+- ✅ Gestion des services (à implémenter)
+- ✅ Gestion des rendez-vous (à implémenter)
+- ✅ Consultation des avis (à implémenter)
+
+### Côté Admin
+- ✅ Dashboard avec statistiques
+- ✅ Création de comptes garagistes
+- ✅ Gestion des garages (suspendre/activer)
+- ✅ Gestion des utilisateurs (à implémenter complètement)
+
+## 👥 Rôles utilisateurs
+
+| Rôle        | Description                          | Accès principal                              |
+| ----------- | ------------------------------------ | -------------------------------------------- |
+| **Client**  | Utilisateur de l'application        | Recherche, réservation, avis                 |
+| **Garagiste** | Propriétaire d'un garage          | Gestion services, rendez-vous, profil garage |
+| **Admin**   | Gestionnaire global                  | Supervision complète, création de comptes   |
+
+## 📝 Notes importantes
+
+1. **Premier utilisateur Admin** : Créer manuellement un utilisateur avec le rôle `admin` dans MongoDB ou via un script d'initialisation.
+
+2. **Géolocalisation** : L'application nécessite des permissions de localisation sur l'appareil.
+
+3. **Base URL API** : Pour tester sur un appareil physique, remplacer `localhost` par l'adresse IP locale de votre machine dans `api_client.dart`.
+
+4. **Firebase** : Pour les notifications push, configurer Firebase dans le projet Flutter (voir la documentation Firebase).
+
+5. **Cloudinary** : Optionnel, pour le stockage d'images. Vous pouvez utiliser un autre service ou un stockage local.
+
+## 🔒 Sécurité
+
+- Authentification JWT avec tokens
+- Mots de passe hashés avec bcrypt
+- Middlewares d'autorisation par rôle
+- Validation des inputs côté serveur
+
+## 🚧 Évolutions futures
+
+- [ ] Paiement en ligne (Stripe, PayPal)
+- [ ] Système de fidélité client
+- [ ] Chat en direct client ↔ garagiste
+- [ ] Version web de l'interface admin
+- [ ] Recommandations automatiques
+- [ ] Notifications push
+- [ ] Filtrage avancé des garages
+- [ ] Mode hors ligne avec synchronisation
+
+## 📄 Licence
+
+Ce projet est sous licence [MIT](LICENSE).
+
+## 👨‍💻 Développement
+
+Pour contribuer au projet :
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit les changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
 ---
 
-## **🛠️ API Endpoints (Exemples)**
-- **Authentification** : `POST /api/auth/login/` (connexion utilisateur)
-- **Liste des garages** : `GET /api/garages/`
-- **Détails d’un garage** : `GET /api/garages/{id}/`
-- **Création d’un service** : `POST /api/services/`
-- **Réservation d’un rendez-vous** : `POST /api/reservations/`
-
----
-
-## **📝 Contribuer au projet**
-1. **Fork le projet**
-2. **Crée une branche** (`git checkout -b feature-ma-fonctionnalite`)
-3. **Fais tes modifications** et commits (`git commit -m 'Ajout de ma fonctionnalité'`)
-4. **Push ta branche** (`git push origin feature-ma-fonctionnalite`)
-5. **Crée une Pull Request**
-
----
-
-## **🔒 Sécurité et bonnes pratiques**
-✅ Utilisation de **JWT** pour sécuriser l’authentification.  
-✅ Protection CSRF activée sur Django.  
-✅ API REST sécurisée avec des permissions par rôles (admin, garage, client).  
-✅ Gestion des erreurs et logs pour suivre les activités suspectes.
-
----
-
-## **🛎️ Support et contact**
-📧 Contact : support@blomoto.com  
-📌 Site officiel : [www.blomoto.com](http://www.blomoto.com)  
+**Développé avec ❤️ pour Promoto**
 
