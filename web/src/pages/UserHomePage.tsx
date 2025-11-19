@@ -31,6 +31,7 @@ export default function UserHomePage() {
     reviews: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [hydrationTimeout, setHydrationTimeout] = useState(false);
 
   // Hydrater l'utilisateur si token existe mais user pas encore chargé
   useEffect(() => {
@@ -40,12 +41,13 @@ export default function UserHomePage() {
           const res = await api.get("/auth/me");
           setUser(res.data.user);
         } catch (e) {
-          // Erreur, on ignore
+          // Erreur, token invalide - on supprime le token
+          logout();
         }
       }
     };
     hydrate();
-  }, [token, user, setUser]);
+  }, [token, user, setUser, logout]);
 
   // Charger les données de la page d'accueil
   useEffect(() => {
@@ -116,8 +118,19 @@ export default function UserHomePage() {
     }
   }
 
-  // En attendant l'hydratation si on a un token mais pas encore user
-  if (token && !user) {
+  // Timeout pour l'hydratation si elle prend trop de temps
+  useEffect(() => {
+    if (token && !user) {
+      const timer = setTimeout(() => {
+        setHydrationTimeout(true);
+      }, 2000); // Timeout de 2 secondes
+      return () => clearTimeout(timer);
+    } else {
+      setHydrationTimeout(false);
+    }
+  }, [token, user]);
+
+  if (token && !user && !hydrationTimeout) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[var(--color-racine-50)] to-[var(--color-racine-100)] flex items-center justify-center">
         <div className="text-[var(--color-noir-700)] text-base sm:text-lg">Chargement...</div>
