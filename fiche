@@ -1,0 +1,180 @@
+Excellent choix, Afissou 👏
+
+👉 **Flutter** pour le **frontend** = parfait : tu auras une **application mobile multiplateforme (Android + iOS)** fluide et moderne.
+👉 **Node.js + Express.js** pour le **backend** = très bon aussi : léger, rapide, bien documenté, et parfait pour une architecture RESTful.
+
+---
+
+### 🚘 Nom d’application proposé
+
+Tu avais mentionné **Promoto**, qui est déjà très bon !
+Mais voici quelques **variantes** que tu peux envisager selon le style que tu veux donner :
+
+| Style                | Proposition     | Signification / Avantage                             |
+| -------------------- | --------------- | ---------------------------------------------------- |
+| 🌍 Moderne & simple  | **Promoto**     | “Pro” + “Moto” → professionnel, mobilité, automobile |
+| 🔧 Court & percutant | **Garalink**    | “Garage” + “Link” → lien entre client et garage      |
+| 📍 Francophone       | **Garage+**     | Simple, intuitif, facile à retenir                   |
+| ⚡ Dynamique          | **FixMe Auto**  | Sens de rapidité et dépannage immédiat               |
+| 🚗 Élégant           | **AutoConnect** | Connexion entre automobilistes et garages            |
+| 💡 Local & pratique  | **MonGarage**   | Sonne personnel et accessible                        |
+
+**Mon avis :** garde **Promoto**, c’est professionnel, court, et adaptable à une identité visuelle forte 🔥
+
+---
+
+## 📄 FICHE PROJET — APPLICATION **PROMOTO**
+
+### 🪪 **Informations générales**
+
+* **Nom du projet :** Promoto
+* **Type d’application :** Mobile (Android & iOS)
+* **Catégorie :** Services automobiles / mise en relation
+* **Objectif principal :** Mettre en relation les automobilistes et les garages à proximité via la géolocalisation.
+
+---
+
+### 🧭 **Description du concept**
+
+Promoto est une application mobile qui permet aux **clients** de trouver rapidement un **garage automobile à proximité**, selon leur besoin (panne, entretien, urgence, etc.).
+Grâce à la géolocalisation, Promoto affiche les garages disponibles dans la zone, leurs services, tarifs, horaires, et les avis des utilisateurs.
+Les **garagistes** disposent d’un **dashboard** pour gérer leurs rendez-vous et services, tandis qu’un **super administrateur** supervise l’ensemble du système.
+
+---
+
+### 👥 **Public cible**
+
+* Les automobilistes cherchant un garage rapidement.
+* Les garagistes souhaitant accroître leur visibilité.
+* Les gestionnaires souhaitant superviser les garages et les services.
+
+---
+
+### ⚙️ **Technologies utilisées**
+
+#### Frontend (Mobile)
+
+* **Framework :** Flutter (Dart)
+* **Fonctionnalités clés :**
+
+  * UI responsive et fluide
+  * Intégration de Google Maps / OpenStreetMap
+  * Authentification et gestion des comptes
+  * Recherche de services / garages
+  * Notifications (Firebase)
+  * Historique et avis clients
+
+#### Backend
+
+* **Langage :** JavaScript (Node.js)
+* **Framework :** Express.js
+* **Authentification :** JWT + bcrypt
+* **Base de données :** MongoDB (via Mongoose)
+* **Stockage d’images :** Cloudinary / Firebase Storage
+* **API :**
+
+  * RESTful endpoints pour la communication mobile ↔ serveur
+  * Filtrage et tri par distance / services
+  * Gestion des utilisateurs, garages, services, rendez-vous, avis
+
+---
+
+### 🗂️ **Structure des rôles**
+
+| Rôle                | Description              | Accès principal                                           |
+| ------------------- | ------------------------ | --------------------------------------------------------- |
+| 👤 **Client**       | Utilisateur de l’app     | Recherche de garages, réservation, avis                   |
+| 🔧 **Garagiste**    | Propriétaire d’un garage | Gestion des services, rendez-vous, clients                |
+| 🛠️ **Super Admin** | Gestionnaire global      | Supervision, création de comptes garagistes, statistiques |
+
+---
+
+### 🧱 **Structure des modules (backend)**
+
+1. **Auth** : inscription / connexion / gestion JWT
+2. **Users** : profil, rôles, informations
+3. **Garages** : CRUD complet, géolocalisation
+4. **Services** : ajout, modification, liste des services proposés
+5. **Appointments (rendez-vous)** : création, modification, suivi
+6. **Reviews (avis)** : notes, commentaires, moyenne par garage
+7. **Admin Dashboard** : statistiques et gestion globale
+
+---
+
+### 📍 **Fonctionnalités principales**
+
+#### Côté Client :
+
+* Création de compte / connexion
+* Géolocalisation automatique
+* Liste des garages proches
+* Filtrage par service
+* Consultation des détails du garage
+* Réservation de rendez-vous
+* Évaluation du service (note + avis)
+
+#### Côté Garagiste :
+
+* Connexion (avec compte créé par l’admin)
+* Gestion du profil du garage
+* Ajout / modification des services
+* Gestion des rendez-vous
+* Consultation des avis clients
+
+#### Côté Admin :
+
+* Gestion complète des utilisateurs et garagistes
+* Création de comptes garagistes
+* Suppression / suspension de garages
+* Visualisation des statistiques (garages actifs, RDV, etc.)
+
+---
+
+### 🧩 **Architecture technique simplifiée**
+
+```
+Flutter (Mobile App)
+       ↓ REST API (HTTP)
+Node.js (Express)
+       ↓
+MongoDB (Database)
+       ↓
+Cloud Storage (Images, documents)
+```
+
+---
+
+### 🔐 **Sécurité**
+
+* Authentification JWT
+* Hashage des mots de passe (bcrypt)
+* Validation des inputs (Joi)
+* Middleware d’autorisation (client, garagiste, admin)
+
+---
+
+### 📈 **Objectifs à court terme**
+
+1. Implémenter la version MVP (client + carte des garages)
+2. Ajouter la gestion de rendez-vous
+3. Intégrer le dashboard garagiste
+4. Ajouter la partie Super Admin
+
+---
+
+### 💡 **Évolutions futures possibles**
+
+* Paiement en ligne (Stripe, PayPal)
+* Système de fidélité client
+* Chat en direct client ↔ garagiste
+* Version web de l’interface admin
+* Recommandations automatiques basées sur l’historique
+
+---
+
+Souhaites-tu que je te fasse maintenant la **fiche technique détaillée de la base de données** (toutes les collections MongoDB avec leurs champs et relations) ?
+Ce sera la prochaine étape logique avant de commencer à coder le backend.
+
+Email : admin@promoto.com
+Mot de passe : admin123
+Rôle : admin
