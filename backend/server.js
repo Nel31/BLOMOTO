@@ -12,9 +12,18 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
+const rawOrigins =
+  process.env.SOCKET_ALLOWED_ORIGINS ||
+  process.env.FRONTEND_URL ||
+  'http://localhost:5173';
+const allowedOrigins = rawOrigins
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: allowedOrigins.includes('*') ? true : allowedOrigins,
     methods: ['GET', 'POST'],
   },
 });

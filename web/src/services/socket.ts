@@ -6,7 +6,31 @@ class SocketService {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = (import.meta as any).env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+    this.baseURL = this.resolveBaseUrl();
+  }
+
+  private resolveBaseUrl() {
+    const env = (import.meta as any).env;
+
+    if (env?.VITE_SOCKET_URL) {
+      return env.VITE_SOCKET_URL;
+    }
+
+    const apiBase: string | undefined = env?.VITE_API_BASE_URL;
+    if (!apiBase) {
+      return 'http://localhost:5000';
+    }
+
+    try {
+      const parsed = new URL(apiBase);
+      parsed.pathname = '';
+      parsed.search = '';
+      parsed.hash = '';
+      return parsed.toString().replace(/\/$/, '');
+    } catch {
+      console.warn('[socket] Impossible de parser VITE_API_BASE_URL, fallback localhost');
+      return 'http://localhost:5000';
+    }
   }
 
   connect() {
