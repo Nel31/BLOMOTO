@@ -1,4 +1,27 @@
 const User = require('../models/User');
+const fs = require('fs');
+const path = require('path');
+
+// Fonction pour supprimer un fichier local à partir de son URL
+const deleteLocalFileByUrl = (imageUrl) => {
+  try {
+    if (!imageUrl) return;
+    let relativePath;
+    try {
+      const urlObj = new URL(imageUrl);
+      relativePath = urlObj.pathname; // /uploads/garages/filename.jpg
+    } catch (e) {
+      // Si ce n'est pas une URL complète, traiter comme un chemin relatif
+      relativePath = imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl;
+    }
+    const filePath = path.join(__dirname, '..', relativePath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la suppression du fichier local:', error);
+  }
+};
 
 // @desc    Obtenir le profil de l'utilisateur connecté
 // @route   GET /api/users/profile
@@ -21,17 +44,25 @@ exports.getProfile = async (req, res) => {
 // @access  Private
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, phone, avatar } = req.body;
+    const { name, phone, avatar, deleteOldAvatar } = req.body;
+    const user = await User.findById(req.user._id);
 
-    const user = await User.findByIdAndUpdate(
+    // Supprimer l'ancien avatar si un nouveau est fourni ou si suppression demandée
+    if ((avatar && user.avatar) || deleteOldAvatar) {
+      if (user.avatar) {
+        deleteLocalFileByUrl(user.avatar);
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
-      { name, phone, avatar },
+      { name, phone, avatar: avatar || (deleteOldAvatar ? null : user.avatar) },
       { new: true, runValidators: true }
     );
 
     res.json({
       success: true,
-      user,
+      user: updatedUser,
     });
   } catch (error) {
     res.status(400).json({ message: error.message });

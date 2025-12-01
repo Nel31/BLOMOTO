@@ -3,11 +3,14 @@ import { create } from "zustand";
 export type UserRole = "admin" | "garagiste" | "client";
 
 export interface UserInfo {
-  id: string;
+  id?: string;
+  _id?: string;
   name: string;
   email: string;
   role: UserRole;
   garageId?: string | null;
+  phone?: string;
+  avatar?: string;
 }
 
 interface AuthState {

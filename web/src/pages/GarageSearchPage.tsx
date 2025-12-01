@@ -449,7 +449,7 @@ export default function GarageSearchPage() {
                       : garages.filter(g => g.location?.coordinates && g.location.coordinates[0] !== 0).length > 0
                       ? (() => {
                           const firstGarage = garages.find(g => g.location?.coordinates && g.location.coordinates[0] !== 0);
-                          return firstGarage ? [firstGarage.location.coordinates[1], firstGarage.location.coordinates[0]] : [48.8566, 2.3522];
+                          return firstGarage && firstGarage.location?.coordinates ? [firstGarage.location.coordinates[1], firstGarage.location.coordinates[0]] : [48.8566, 2.3522];
                         })()
                       : [48.8566, 2.3522]
                   }

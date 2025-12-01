@@ -1,4 +1,5 @@
 const { upload, uploadToCloudinary } = require('../utils/upload');
+const cloudinaryUtil = require('../utils/cloudinary');
 
 // @desc    Upload d'images pour garage
 // @route   POST /api/upload/garage
@@ -8,11 +9,20 @@ exports.uploadGarageImages = [
   uploadToCloudinary,
   async (req, res) => {
     try {
-      const urls = req.files ? req.files.map((file) => file.cloudinaryUrl) : [];
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ message: 'Aucune image fournie' });
+      }
+
+      const images = req.files.map((file) => ({
+        url: file.cloudinaryUrl,
+        publicId: file.cloudinaryPublicId,
+      }));
       
       res.json({
         success: true,
-        images: urls,
+        count: images.length,
+        images: images.map(img => img.url),
+        details: images,
       });
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -28,15 +38,14 @@ exports.uploadAvatar = [
   uploadToCloudinary,
   async (req, res) => {
     try {
-      const url = req.file?.cloudinaryUrl;
-      
-      if (!url) {
+      if (!req.file || !req.file.cloudinaryUrl) {
         return res.status(400).json({ message: 'Aucune image fournie' });
       }
 
       res.json({
         success: true,
-        avatar: url,
+        avatar: req.file.cloudinaryUrl,
+        publicId: req.file.cloudinaryPublicId,
       });
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -52,15 +61,92 @@ exports.uploadVehiclePhotos = [
   uploadToCloudinary,
   async (req, res) => {
     try {
-      const urls = req.files ? req.files.map((file) => file.cloudinaryUrl) : [];
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ message: 'Aucune photo fournie' });
+      }
+
+      const photos = req.files.map((file) => ({
+        url: file.cloudinaryUrl,
+        publicId: file.cloudinaryPublicId,
+      }));
       
       res.json({
         success: true,
-        photos: urls,
+        count: photos.length,
+        photos: photos.map(photo => photo.url),
+        details: photos,
       });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   },
 ];
+
+// @desc    Supprimer une image
+// @route   DELETE /api/upload/:publicId
+// @access  Private
+exports.deleteImage = async (req, res) => {
+  try {
+    const { publicId } = req.params;
+    const fs = require('fs');
+    const path = require('path');
+
+    if (!publicId) {
+      return res.status(400).json({ message: 'Public ID requis' });
+    }
+
+    // Supprimer le fichier local
+    const filePath = path.join(__dirname, '..', publicId);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      res.json({
+        success: true,
+        message: 'Image supprimée avec succès',
+      });
+    } else {
+      res.status(404).json({ message: 'Image non trouvée' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Supprimer une image par URL
+// @route   DELETE /api/upload/url
+// @access  Private
+exports.deleteImageByUrl = async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+    const fs = require('fs');
+    const path = require('path');
+
+    if (!imageUrl) {
+      return res.status(400).json({ message: 'URL de l\'image requise' });
+    }
+
+    // Extraire le chemin relatif de l'URL
+    // Format: http://localhost:5000/uploads/garages/filename.jpg
+    let relativePath;
+    try {
+      const urlObj = new URL(imageUrl);
+      relativePath = urlObj.pathname; // /uploads/garages/filename.jpg
+    } catch (e) {
+      // Si ce n'est pas une URL complète, traiter comme un chemin relatif
+      relativePath = imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl;
+    }
+    const filePath = path.join(__dirname, '..', relativePath);
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      res.json({
+        success: true,
+        message: 'Image supprimée avec succès',
+      });
+    } else {
+      res.status(404).json({ message: 'Image non trouvée' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 

@@ -3,6 +3,29 @@ const Appointment = require('../models/Appointment');
 const Service = require('../models/Service');
 const Review = require('../models/Review');
 const { geocodeAddress } = require('../utils/geocoding');
+const fs = require('fs');
+const path = require('path');
+
+// Fonction pour supprimer un fichier local à partir de son URL
+const deleteLocalFileByUrl = (imageUrl) => {
+  try {
+    if (!imageUrl) return;
+    let relativePath;
+    try {
+      const urlObj = new URL(imageUrl);
+      relativePath = urlObj.pathname; // /uploads/garages/filename.jpg
+    } catch (e) {
+      // Si ce n'est pas une URL complète, traiter comme un chemin relatif
+      relativePath = imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl;
+    }
+    const filePath = path.join(__dirname, '..', relativePath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la suppression du fichier local:', error);
+  }
+};
 
 // @desc    Obtenir les garages à proximité
 // @route   GET /api/garages/nearby
@@ -243,6 +266,15 @@ exports.updateMyGarage = async (req, res) => {
           coordinates: geocoded.coordinates,
         };
       }
+    }
+
+    // Gérer la suppression d'images si nécessaire
+    if (req.body.imagesToDelete && Array.isArray(req.body.imagesToDelete)) {
+      req.body.imagesToDelete.forEach((imageUrl) => {
+        deleteLocalFileByUrl(imageUrl);
+      });
+      // Retirer imagesToDelete du body avant la mise à jour
+      delete req.body.imagesToDelete;
     }
 
     // Mise à jour du garage

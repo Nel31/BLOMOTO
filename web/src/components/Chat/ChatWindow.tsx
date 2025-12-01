@@ -46,7 +46,8 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
 
   const setupSocket = () => {
     socketService.connect();
-    const roomId = `conversation-${currentUser?._id}-${userId}`;
+    const currentUserId = currentUser?._id || currentUser?.id;
+    const roomId = `conversation-${currentUserId}-${userId}`;
     socketService.joinRoom(roomId);
 
     socketService.onMessage((data: any) => {
@@ -65,7 +66,8 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
       // Extraire l'utilisateur de la conversation
       if (convRes.data.messages && convRes.data.messages.length > 0) {
         const firstMessage = convRes.data.messages[0];
-        const otherUserData = firstMessage.senderId._id === currentUser?._id 
+        const currentUserId = currentUser?._id || currentUser?.id;
+        const otherUserData = firstMessage.senderId._id === currentUserId 
           ? firstMessage.receiverId 
           : firstMessage.senderId;
         // S'assurer que le nom de l'admin est "Promoto"
@@ -181,7 +183,8 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-1" style={{ backgroundColor: '#efeae2', backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cdefs%3E%3Cpattern id=\'grid\' width=\'40\' height=\'40\' patternUnits=\'userSpaceOnUse\'%3E%3Cpath d=\'M 40 0 L 0 0 0 40\' fill=\'none\' stroke=\'%23d4d1c7\' stroke-width=\'0.5\' opacity=\'0.3\'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=\'100\' height=\'100\' fill=\'url(%23grid)\'/%3E%3C/svg%3E")' }}>
         {messages.map((msg, index) => {
-          const isOwn = msg.senderId._id === currentUser?._id;
+          const currentUserId = currentUser?._id || currentUser?.id;
+          const isOwn = msg.senderId._id === currentUserId;
           const prevMessage = index > 0 ? messages[index - 1] : null;
           const showAvatar = !isOwn && (!prevMessage || prevMessage.senderId._id !== msg.senderId._id);
           const showTime = !prevMessage || 

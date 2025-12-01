@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuthStore } from "../store/auth";
+import ImageUpload from "../components/ImageUpload/ImageUpload";
 
 interface Review {
   _id: string;
@@ -32,6 +33,7 @@ export default function ProfilePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [avatar, setAvatar] = useState<string>("");
 
   // Formulaire mot de passe
   const [currentPassword, setCurrentPassword] = useState("");
@@ -53,6 +55,7 @@ export default function ProfilePage() {
       setName(user.name || "");
       setEmail(user.email || "");
       setPhone(user.phone || "");
+      setAvatar(user.avatar || "");
       loadReviews();
       setLoading(false);
     }
@@ -64,8 +67,9 @@ export default function ProfilePage() {
       const res = await api.get("/reviews");
       const allReviews = res.data.reviews || [];
       // Filtrer seulement ceux de l'utilisateur connecté
+      const userId = user?._id || user?.id;
       setReviews(allReviews.filter((r: Review & { clientId: any }) => 
-        r.clientId?._id === user?._id || r.clientId === user?._id
+        r.clientId?._id === userId || r.clientId === userId
       ));
     } catch (err) {
       // Ignorer si pas d'avis
@@ -82,10 +86,11 @@ export default function ProfilePage() {
       const res = await api.put("/users/profile", {
         name,
         phone: phone || undefined,
+        avatar: avatar || undefined,
         // Note: updateProfile ne permet pas de changer l'email actuellement
       });
 
-      setUser(res.data.user || { ...user, name, phone });
+      setUser(res.data.user || { ...user, name, phone, avatar });
       setSuccess("Profil mis à jour avec succès !");
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -239,6 +244,35 @@ export default function ProfilePage() {
           <div className="p-6">
             {activeTab === "profile" && (
               <form onSubmit={handleUpdateProfile} className="space-y-6">
+                {/* Avatar */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--color-noir-700)' }}>
+                    Photo de profil
+                  </label>
+                  <div className="flex items-start gap-4">
+                    {avatar && (
+                      <div className="relative">
+                        <img
+                          src={avatar}
+                          alt="Avatar"
+                          className="w-20 h-20 rounded-full object-cover border-2"
+                          style={{ borderColor: 'var(--color-racine-200)' }}
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <ImageUpload
+                        onUploadComplete={(urls) => setAvatar(urls[0] || "")}
+                        maxImages={1}
+                        folder="avatars"
+                        multiple={false}
+                        label="Changer la photo de profil"
+                        initialUrls={avatar ? [avatar] : []}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--color-noir-700)' }}>
                     Nom complet *

@@ -112,8 +112,8 @@ export default function GarageMap({
         );
         
         if (validGarages.length > 0) {
-          const avgLat = validGarages.reduce((sum, g) => sum + g.location.coordinates[1], 0) / validGarages.length;
-          const avgLon = validGarages.reduce((sum, g) => sum + g.location.coordinates[0], 0) / validGarages.length;
+          const avgLat = validGarages.reduce((sum, g) => sum + (g.location?.coordinates[1] || 0), 0) / validGarages.length;
+          const avgLon = validGarages.reduce((sum, g) => sum + (g.location?.coordinates[0] || 0), 0) / validGarages.length;
           if (!center || (center[0] === 48.8566 && center[1] === 2.3522)) {
             mapCenter = [avgLat, avgLon];
           }

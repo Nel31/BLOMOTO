@@ -35,36 +35,64 @@ const upload = multer({
   },
 });
 
-// Middleware pour uploader vers Cloudinary après multer
+// Middleware pour stocker les images localement (Cloudinary désactivé temporairement)
 const uploadToCloudinary = async (req, res, next) => {
   if (!req.files && !req.file) {
     return next();
   }
 
-  const cloudinaryUtil = require('./cloudinary');
   const files = req.files || (req.file ? [req.file] : []);
+  const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
 
   try {
-    const uploadPromises = files.map(async (file) => {
-      const folder = req.body.folder || 'promoto';
-      const result = await cloudinaryUtil.uploadImage(file.path, folder);
-      
-      // Supprimer le fichier temporaire après upload
-      fs.unlinkSync(file.path);
-      
-      return result.url;
-    });
-
-    const urls = await Promise.all(uploadPromises);
+    // Déterminer le dossier selon la route
+    let folder = req.body.folder || 'promoto';
     
-    // Ajouter les URLs aux requêtes
+    // Auto-détection du dossier selon la route
+    if (req.path && req.path.includes('/garage')) {
+      folder = 'garages';
+    } else if (req.path && req.path.includes('/avatar')) {
+      folder = 'avatars';
+    } else if (req.path && req.path.includes('/vehicle')) {
+      folder = 'vehicles';
+    }
+
+    // Créer le dossier de destination s'il n'existe pas
+    const destinationFolder = path.join('uploads', folder);
+    if (!fs.existsSync(destinationFolder)) {
+      fs.mkdirSync(destinationFolder, { recursive: true });
+    }
+
+    // Déplacer les fichiers vers le dossier de destination et générer les URLs locales
+    const results = await Promise.all(files.map(async (file) => {
+      const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+      const destinationPath = path.join(destinationFolder, fileName);
+      
+      // Déplacer le fichier vers le dossier de destination
+      fs.renameSync(file.path, destinationPath);
+      
+      // Générer l'URL locale
+      const relativePath = path.join('uploads', folder, fileName).replace(/\\/g, '/');
+      const url = `${baseUrl}/${relativePath}`;
+      
+      return {
+        url: url,
+        publicId: relativePath,
+        width: null,
+        height: null,
+      };
+    }));
+    
+    // Ajouter les URLs et publicIds aux requêtes
     if (req.file) {
-      req.file.cloudinaryUrl = urls[0];
+      req.file.cloudinaryUrl = results[0].url;
+      req.file.cloudinaryPublicId = results[0].publicId;
     }
     if (req.files) {
       req.files = req.files.map((file, index) => ({
         ...file,
-        cloudinaryUrl: urls[index],
+        cloudinaryUrl: results[index].url,
+        cloudinaryPublicId: results[index].publicId,
       }));
     }
     
@@ -73,7 +101,11 @@ const uploadToCloudinary = async (req, res, next) => {
     // Nettoyer les fichiers temporaires en cas d'erreur
     files.forEach((file) => {
       if (fs.existsSync(file.path)) {
-        fs.unlinkSync(file.path);
+        try {
+          fs.unlinkSync(file.path);
+        } catch (err) {
+          console.error('Erreur lors de la suppression du fichier temporaire:', err);
+        }
       }
     });
     return res.status(500).json({ message: error.message });

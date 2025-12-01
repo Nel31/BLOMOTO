@@ -33,6 +33,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Servir les fichiers statiques depuis le dossier uploads
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Connexion à MongoDB
 mongoose
   .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/promoto', {

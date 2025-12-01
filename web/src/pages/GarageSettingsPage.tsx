@@ -439,6 +439,7 @@ export default function GarageSettingsPage() {
               folder="garages"
               multiple={true}
               label="Ajouter des images du garage"
+              initialUrls={images}
             />
             {images.length > 0 && (
               <p className="text-xs mt-2" style={{ color: 'var(--color-noir-600)' }}>
