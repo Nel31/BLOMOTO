@@ -161,6 +161,14 @@ export default function Header() {
                           ❤️ Mes favoris
                         </Link>
                         <Link
+                          to="/app/quotes"
+                          onClick={() => setShowUserMenu(false)}
+                          className="block px-4 py-2 text-sm hover:bg-[var(--color-racine-50)] transition-all duration-200 hover:translate-x-1 rounded-lg mx-2"
+                          style={{ color: 'var(--color-noir-700)' }}
+                        >
+                          📄 Mes devis
+                        </Link>
+                        <Link
                           to="/app/messages"
                           onClick={() => setShowUserMenu(false)}
                           className="block px-4 py-2 text-sm hover:bg-[var(--color-racine-50)] transition-all duration-200 hover:translate-x-1 rounded-lg mx-2 relative"

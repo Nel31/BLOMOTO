@@ -24,12 +24,16 @@ import GarageServicesPage from "./pages/GarageServicesPage";
 import GarageReviewsPage from "./pages/GarageReviewsPage";
 import GarageSettingsPage from "./pages/GarageSettingsPage";
 import GarageMessagesPage from "./pages/GarageMessagesPage";
+import GarageQuotesPage from "./pages/GarageQuotesPage";
+import GarageInvoicesPage from "./pages/GarageInvoicesPage";
+import ClientQuotesPage from "./pages/ClientQuotesPage";
 import AdminAppointmentsPage from "./pages/AdminAppointmentsPage";
 import AdminReviewsPage from "./pages/AdminReviewsPage";
 import AdminServicesPage from "./pages/AdminServicesPage";
 import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 import AdminGarageDetailPage from "./pages/AdminGarageDetailPage";
 import AdminMessagesPage from "./pages/AdminMessagesPage";
+import AdminInvoicesPage from "./pages/AdminInvoicesPage";
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const isAuthenticated = useAuthStore((s) => !!s.token);
@@ -105,6 +109,7 @@ export default function App() {
         <Route path="services" element={<AdminServicesPage />} />
         <Route path="analytics" element={<AdminAnalyticsPage />} />
         <Route path="messages" element={<AdminMessagesPage />} />
+        <Route path="invoices" element={<AdminInvoicesPage />} />
       </Route>
 
       {/* Espace Garagiste */}
@@ -168,6 +173,26 @@ export default function App() {
           </PrivateRoute>
         }
       />
+      <Route
+        path="/garage/quotes"
+        element={
+          <PrivateRoute>
+            <RoleRoute roles={["garagiste"]}>
+              <GarageQuotesPage />
+            </RoleRoute>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/garage/invoices"
+        element={
+          <PrivateRoute>
+            <RoleRoute roles={["garagiste"]}>
+              <GarageInvoicesPage />
+            </RoleRoute>
+          </PrivateRoute>
+        }
+      />
 
       {/* Espace Client - Accessible à tous, avec fonctionnalités selon l'authentification */}
       <Route path="/app" element={<UserHomePage />} />
@@ -209,6 +234,16 @@ export default function App() {
                   <PrivateRoute>
                     <RoleRoute roles={["client"]}>
                       <FavoritesPage />
+                    </RoleRoute>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/app/quotes"
+                element={
+                  <PrivateRoute>
+                    <RoleRoute roles={["client"]}>
+                      <ClientQuotesPage />
                     </RoleRoute>
                   </PrivateRoute>
                 }

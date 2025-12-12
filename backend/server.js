@@ -70,6 +70,8 @@ app.use('/api/favorites', require('./routes/favorites'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/payments', require('./routes/payments'));
+app.use('/api/quotes', require('./routes/quotes'));
+app.use('/api/invoices', require('./routes/invoices'));
 app.use('/api/admin', require('./routes/admin'));
 
 // Configuration Socket.io pour le chat

@@ -131,5 +131,36 @@ exports.deleteMultipleImages = async (publicIds) => {
   }
 };
 
+/**
+ * Upload un fichier (buffer) vers Cloudinary (pour PDFs, etc.)
+ * @param {Buffer} buffer - Buffer du fichier
+ * @param {String} folder - Dossier dans Cloudinary
+ * @param {String} resourceType - Type de ressource ('image', 'raw', 'video', 'auto')
+ * @returns {Promise<Object>} - Résultat avec URL du fichier
+ */
+exports.uploadToCloudinary = async (buffer, folder = 'promoto', resourceType = 'raw') => {
+  try {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: `promoto/${folder}`,
+          resource_type: resourceType,
+        },
+        (error, result) => {
+          if (error) {
+            reject(new Error(`Erreur lors de l'upload Cloudinary: ${error.message}`));
+          } else {
+            resolve(result);
+          }
+        }
+      );
+
+      uploadStream.end(buffer);
+    });
+  } catch (error) {
+    throw new Error(`Erreur lors de l'upload Cloudinary: ${error.message}`);
+  }
+};
+
 module.exports = exports;
 

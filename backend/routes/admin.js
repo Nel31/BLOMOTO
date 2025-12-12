@@ -15,6 +15,7 @@ const {
   getAllServices,
   getAnalytics,
 } = require('../controllers/adminController');
+const { getAllInvoices } = require('../controllers/invoiceController');
 const { protect, authorize } = require('../middleware/auth');
 
 // Toutes les routes admin nécessitent une authentification et le rôle admin
@@ -34,6 +35,7 @@ router.get('/appointments', getAllAppointments);
 router.get('/reviews', getAllReviews);
 router.delete('/reviews/:id', deleteReview);
 router.get('/services', getAllServices);
+router.get('/invoices', getAllInvoices);
 
 module.exports = router;
 

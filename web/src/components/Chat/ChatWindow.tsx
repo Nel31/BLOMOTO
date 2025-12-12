@@ -27,22 +27,45 @@ interface ChatWindowProps {
   onClose?: () => void;
 }
 
+interface Quote {
+  _id: string;
+  quoteNumber: string;
+  status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired';
+  validUntil: string;
+  total: number;
+  clientId?: any;
+}
+
 export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [otherUser, setOtherUser] = useState<any>(null);
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [processingQuote, setProcessingQuote] = useState<string | null>(null);
+  const [showQuoteMenu, setShowQuoteMenu] = useState(false);
+  const [showInvoiceMenu, setShowInvoiceMenu] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentUser = useAuthStore((s) => s.user);
 
   useEffect(() => {
     loadConversation();
     setupSocket();
+    // Charger les devis si l'utilisateur est un client
+    if (currentUser?.role === 'client') {
+      loadQuotes();
+    }
+    // Charger les devis et factures si l'utilisateur est un garagiste
+    if (currentUser?.role === 'garagiste') {
+      loadGarageQuotes();
+      loadGarageInvoices();
+    }
     return () => {
       socketService.offMessage();
     };
-  }, [userId]);
+  }, [userId, currentUser]);
 
   const setupSocket = () => {
     socketService.connect();
@@ -135,11 +158,131 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
     }
   };
 
+  const loadQuotes = async () => {
+    try {
+      const res = await api.get("/quotes/client/me");
+      setQuotes(res.data.quotes || []);
+    } catch (err) {
+      console.error('Erreur chargement devis:', err);
+    }
+  };
+
+  const loadGarageQuotes = async () => {
+    try {
+      const res = await api.get("/quotes/garage/me");
+      setQuotes(res.data.quotes || []);
+    } catch (err) {
+      console.error('Erreur chargement devis garagiste:', err);
+    }
+  };
+
+  const loadGarageInvoices = async () => {
+    try {
+      const res = await api.get("/invoices/garage/me");
+      setInvoices(res.data.invoices || []);
+    } catch (err) {
+      console.error('Erreur chargement factures:', err);
+    }
+  };
+
+  const sendQuoteViaChat = async (quoteId: string) => {
+    try {
+      await api.post(`/quotes/${quoteId}/send`, {
+        sendViaChat: true,
+        sendViaEmail: false,
+      });
+      setShowQuoteMenu(false);
+      await loadConversation(); // Recharger les messages
+      alert("Devis envoyé avec succès !");
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Erreur lors de l'envoi");
+    }
+  };
+
+  const sendInvoiceViaChat = async (invoiceId: string) => {
+    try {
+      await api.post(`/invoices/${invoiceId}/send`, {
+        sendViaChat: true,
+        sendViaEmail: false,
+      });
+      setShowInvoiceMenu(false);
+      await loadConversation(); // Recharger les messages
+      alert("Facture envoyée avec succès !");
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Erreur lors de l'envoi");
+    }
+  };
+
+  const extractQuoteNumber = (content: string): string | null => {
+    // Chercher un pattern comme "Devis DEV-2025-0001" ou "Devis DEV-2025-0001 -"
+    const match = content.match(/Devis\s+([A-Z]+-\d{4}-\d+)/i);
+    return match ? match[1] : null;
+  };
+
+  const getQuoteFromMessage = (msg: Message): Quote | null => {
+    if (currentUser?.role !== 'client') return null;
+    const quoteNumber = extractQuoteNumber(msg.content);
+    if (!quoteNumber) return null;
+    return quotes.find(q => q.quoteNumber === quoteNumber) || null;
+  };
+
+  const acceptQuote = async (quoteId: string) => {
+    if (!confirm("Êtes-vous sûr de vouloir accepter ce devis ?")) {
+      return;
+    }
+
+    setProcessingQuote(quoteId);
+    try {
+      await api.put(`/quotes/${quoteId}/accept`);
+      await loadQuotes();
+      alert("Devis accepté avec succès !");
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Erreur lors de l'acceptation");
+    } finally {
+      setProcessingQuote(null);
+    }
+  };
+
+  const rejectQuote = async (quoteId: string) => {
+    if (!confirm("Êtes-vous sûr de vouloir rejeter ce devis ?")) {
+      return;
+    }
+
+    setProcessingQuote(quoteId);
+    try {
+      await api.put(`/quotes/${quoteId}/reject`);
+      await loadQuotes();
+      alert("Devis rejeté");
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Erreur lors du rejet");
+    } finally {
+      setProcessingQuote(null);
+    }
+  };
+
   const scrollToBottom = () => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
+
+  // Fermer les menus en cliquant en dehors
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.quote-menu') && !target.closest('.invoice-menu')) {
+        setShowQuoteMenu(false);
+        setShowInvoiceMenu(false);
+      }
+    };
+
+    if (showQuoteMenu || showInvoiceMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showQuoteMenu, showInvoiceMenu]);
 
   if (loading) {
     return (
@@ -225,6 +368,100 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
                   }}
                 >
                   <p className="text-sm leading-relaxed break-words" style={{ color: isOwn ? '#000' : '#303030' }}>{msg.content}</p>
+                  
+                  {/* Attachments (PDFs, images, etc.) */}
+                  {msg.attachments && msg.attachments.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                      {msg.attachments.map((attachment, idx) => {
+                        const isPDF = attachment.toLowerCase().endsWith('.pdf') || attachment.includes('pdf') || attachment.includes('application/pdf');
+                        const quote = !isOwn && currentUser?.role === 'client' && isPDF ? getQuoteFromMessage(msg) : null;
+                        const canAccept = quote && quote.status === 'sent' && new Date(quote.validUntil) >= new Date();
+                        
+                        return (
+                          <div key={idx} className="border rounded-lg p-3 bg-white/50">
+                            {isPDF ? (
+                              <div>
+                                <a
+                                  href={attachment}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-2 hover:opacity-80 transition-opacity mb-3"
+                                >
+                                  <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                                  </svg>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-gray-900 truncate">Document PDF</p>
+                                    <p className="text-xs text-gray-500">Cliquez pour télécharger</p>
+                                  </div>
+                                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                  </svg>
+                                </a>
+                                
+                                {/* Boutons d'action en bas du PDF pour les devis */}
+                                {quote && (
+                                  <div className="pt-3 border-t border-gray-200">
+                                    {quote.status === 'accepted' ? (
+                                      <div className="flex items-center gap-2 p-2 rounded bg-green-50">
+                                        <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                        </svg>
+                                        <p className="text-sm font-semibold text-green-700">✓ Devis accepté</p>
+                                      </div>
+                                    ) : quote.status === 'rejected' ? (
+                                      <div className="flex items-center gap-2 p-2 rounded bg-red-50">
+                                        <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                        </svg>
+                                        <p className="text-sm font-semibold text-red-700">✗ Devis rejeté</p>
+                                      </div>
+                                    ) : canAccept ? (
+                                      <div className="flex gap-2">
+                                        <button
+                                          onClick={() => acceptQuote(quote._id)}
+                                          disabled={processingQuote === quote._id}
+                                          className="flex-1 px-4 py-2 text-sm font-semibold rounded-lg transition-all disabled:opacity-50 hover:shadow-md"
+                                          style={{ backgroundColor: '#10b981', color: 'white' }}
+                                        >
+                                          {processingQuote === quote._id ? 'Traitement...' : '✓ Accepter le devis'}
+                                        </button>
+                                        <button
+                                          onClick={() => rejectQuote(quote._id)}
+                                          disabled={processingQuote === quote._id}
+                                          className="flex-1 px-4 py-2 text-sm font-semibold rounded-lg transition-all disabled:opacity-50 hover:shadow-md"
+                                          style={{ backgroundColor: '#ef4444', color: 'white' }}
+                                        >
+                                          {processingQuote === quote._id ? 'Traitement...' : '✗ Refuser le devis'}
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center gap-2 p-2 rounded bg-yellow-50">
+                                        <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                        </svg>
+                                        <p className="text-sm font-semibold text-yellow-700">Devis expiré</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <a
+                                href={attachment}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block"
+                              >
+                                <img src={attachment} alt="Attachment" className="max-w-full h-auto rounded" />
+                              </a>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  
                   <div className={`flex items-center gap-1 mt-1.5 ${isOwn ? 'justify-end' : 'justify-start'}`}>
                     <p className="text-xs" style={{ color: isOwn ? '#667781' : '#667781', opacity: 0.8 }}>
                       {new Date(msg.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
@@ -248,6 +485,93 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
 
       {/* Input */}
       <div className="p-4 border-t" style={{ borderColor: 'var(--color-racine-200)' }}>
+        {/* Boutons pour envoyer devis/facture (uniquement pour garagiste) */}
+        {currentUser?.role === 'garagiste' && (
+          <div className="flex gap-2 mb-2">
+            <div className="relative quote-menu">
+              <button
+                onClick={() => {
+                  setShowQuoteMenu(!showQuoteMenu);
+                  setShowInvoiceMenu(false);
+                }}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg border-2 transition-all hover:shadow-md"
+                style={{ 
+                  borderColor: 'var(--color-racine-300)', 
+                  color: 'var(--color-racine-700)',
+                  backgroundColor: showQuoteMenu ? 'var(--color-racine-100)' : 'white'
+                }}
+              >
+                📄 Envoyer un devis
+              </button>
+              {showQuoteMenu && quotes.length > 0 && (
+                <div className="absolute bottom-full left-0 mb-2 bg-white rounded-lg shadow-xl border-2 z-50 max-h-60 overflow-y-auto min-w-[250px]" style={{ borderColor: 'var(--color-racine-200)' }}>
+                  <div className="p-2">
+                    <p className="text-xs font-semibold mb-2 px-2" style={{ color: 'var(--color-noir-700)' }}>Sélectionner un devis :</p>
+                    {quotes
+                      .filter((q: any) => q.clientId?._id === userId || q.clientId === userId)
+                      .map((quote: any) => (
+                        <button
+                          key={quote._id}
+                          onClick={() => sendQuoteViaChat(quote._id)}
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-lg mb-1 transition-colors"
+                          style={{ color: 'var(--color-noir-700)' }}
+                        >
+                          <div className="font-semibold">{quote.quoteNumber}</div>
+                          <div className="text-xs" style={{ color: 'var(--color-noir-500)' }}>
+                            {quote.total.toFixed(2)}€ - {quote.status === 'sent' ? 'Envoyé' : quote.status === 'accepted' ? 'Accepté' : quote.status}
+                          </div>
+                        </button>
+                      ))}
+                    {quotes.filter((q: any) => q.clientId?._id === userId || q.clientId === userId).length === 0 && (
+                      <p className="text-xs px-2 py-2" style={{ color: 'var(--color-noir-500)' }}>Aucun devis pour ce client</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="relative invoice-menu">
+              <button
+                onClick={() => {
+                  setShowInvoiceMenu(!showInvoiceMenu);
+                  setShowQuoteMenu(false);
+                }}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg border-2 transition-all hover:shadow-md"
+                style={{ 
+                  borderColor: 'var(--color-rouge-300)', 
+                  color: 'var(--color-rouge-700)',
+                  backgroundColor: showInvoiceMenu ? 'var(--color-rouge-100)' : 'white'
+                }}
+              >
+                🧾 Envoyer une facture
+              </button>
+              {showInvoiceMenu && invoices.length > 0 && (
+                <div className="absolute bottom-full left-0 mb-2 bg-white rounded-lg shadow-xl border-2 z-50 max-h-60 overflow-y-auto min-w-[250px]" style={{ borderColor: 'var(--color-rouge-200)' }}>
+                  <div className="p-2">
+                    <p className="text-xs font-semibold mb-2 px-2" style={{ color: 'var(--color-noir-700)' }}>Sélectionner une facture :</p>
+                    {invoices
+                      .filter((inv: any) => inv.clientId?._id === userId || inv.clientId === userId)
+                      .map((invoice: any) => (
+                        <button
+                          key={invoice._id}
+                          onClick={() => sendInvoiceViaChat(invoice._id)}
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-lg mb-1 transition-colors"
+                          style={{ color: 'var(--color-noir-700)' }}
+                        >
+                          <div className="font-semibold">{invoice.invoiceNumber}</div>
+                          <div className="text-xs" style={{ color: 'var(--color-noir-500)' }}>
+                            {invoice.total.toFixed(2)}€ - {invoice.status}
+                          </div>
+                        </button>
+                      ))}
+                    {invoices.filter((inv: any) => inv.clientId?._id === userId || inv.clientId === userId).length === 0 && (
+                      <p className="text-xs px-2 py-2" style={{ color: 'var(--color-noir-500)' }}>Aucune facture pour ce client</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         <div className="flex gap-2">
           <input
             type="text"

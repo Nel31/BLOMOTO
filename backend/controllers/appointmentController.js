@@ -1,4 +1,5 @@
 const Appointment = require('../models/Appointment');
+const Quote = require('../models/Quote');
 const emailService = require('../utils/emailService');
 const smsService = require('../utils/smsService');
 const Garage = require('../models/Garage');
@@ -127,6 +128,7 @@ exports.updateAppointment = async (req, res) => {
     }
 
     const oldStatus = appointment.status;
+
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       req.params.id,
       req.body,

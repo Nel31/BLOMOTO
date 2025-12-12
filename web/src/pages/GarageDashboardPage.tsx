@@ -433,6 +433,40 @@ export default function GarageDashboardPage() {
               Voir tout →
             </div>
           </Link>
+
+          <Link
+            to="/garage/quotes"
+            className="bg-white/90 backdrop-blur-md rounded-xl p-6 shadow-xl border hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group animate-fadeIn"
+            style={{ borderColor: 'var(--color-racine-200)' }}
+          >
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style={{ backgroundColor: 'var(--color-racine-100)' }}>
+              <svg className="w-6 h-6" style={{ color: 'var(--color-racine-600)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold mb-2" style={{ color: 'var(--color-noir)' }}>Devis</h3>
+            <p className="text-sm sm:text-base mb-3" style={{ color: 'var(--color-noir-600)' }}>Créez et envoyez des devis à vos clients</p>
+            <div className="text-xs font-semibold" style={{ color: 'var(--color-racine-600)' }}>
+              Gérer →
+            </div>
+          </Link>
+
+          <Link
+            to="/garage/invoices"
+            className="bg-white/90 backdrop-blur-md rounded-xl p-6 shadow-xl border hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group animate-fadeIn"
+            style={{ borderColor: 'var(--color-racine-200)' }}
+          >
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style={{ backgroundColor: 'var(--color-rose-100)' }}>
+              <svg className="w-6 h-6" style={{ color: 'var(--color-rose-600)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm5 5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold mb-2" style={{ color: 'var(--color-noir)' }}>Factures</h3>
+            <p className="text-sm sm:text-base mb-3" style={{ color: 'var(--color-noir-600)' }}>Gérez vos factures et paiements</p>
+            <div className="text-xs font-semibold" style={{ color: 'var(--color-rose-600)' }}>
+              Gérer →
+            </div>
+          </Link>
         </div>
 
         {/* Messages récents */}
