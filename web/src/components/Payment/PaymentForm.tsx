@@ -8,9 +8,9 @@ import {
 } from '@stripe/react-stripe-js';
 import { api } from '../../api/client';
 
-const stripePromise = loadStripe(
-  (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY || ''
-);
+const stripeKey = (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY;
+// Ne pas appeler loadStripe avec une clé vide pour éviter l'erreur d'initialisation
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 interface PaymentFormProps {
   appointmentId: string;
@@ -159,15 +159,16 @@ function PaymentFormContent({ appointmentId, amount, onSuccess, onCancel }: Paym
 }
 
 export default function PaymentForm(props: PaymentFormProps) {
-  const [stripeLoaded, setStripeLoaded] = useState(false);
+  const [stripeReady, setStripeReady] = useState(false);
 
   useEffect(() => {
-    if ((import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY) {
-      setStripeLoaded(true);
+    // stripePromise est null si la clé n'est pas fournie
+    if (stripePromise) {
+      setStripeReady(true);
     }
   }, []);
 
-  if (!stripeLoaded) {
+  if (!stripeReady || !stripePromise) {
     return (
       <div className="bg-white/90 backdrop-blur-md rounded-xl p-8 text-center shadow-xl border animate-fadeIn" style={{ borderColor: 'var(--color-racine-200)' }}>
         <p className="text-base" style={{ color: 'var(--color-noir-600)' }}>

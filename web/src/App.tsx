@@ -34,6 +34,8 @@ import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 import AdminGarageDetailPage from "./pages/AdminGarageDetailPage";
 import AdminMessagesPage from "./pages/AdminMessagesPage";
 import AdminInvoicesPage from "./pages/AdminInvoicesPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import PaymentCancelPage from "./pages/PaymentCancelPage";
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const isAuthenticated = useAuthStore((s) => !!s.token);
@@ -88,6 +90,9 @@ export default function App() {
         />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        {/* Pages de callback KKIAPAY (publiques) */}
+        <Route path="/payment-success" element={<PaymentSuccessPage />} />
+        <Route path="/payment-cancel" element={<PaymentCancelPage />} />
       {/* Espace Admin */}
       <Route
         path="/admin"

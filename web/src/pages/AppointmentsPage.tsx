@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuthStore } from "../store/auth";
 import ChatWindow from "../components/Chat/ChatWindow";
+import KkiapayButton from "../components/Payment/KkiapayButton";
 
 interface Appointment {
   _id: string;
@@ -32,6 +33,8 @@ interface Appointment {
     category: string;
     price: number;
   };
+  paymentStatus?: "pending" | "paid" | "failed";
+  totalAmount?: number;
 }
 
 export default function AppointmentsPage() {
@@ -371,6 +374,29 @@ export default function AppointmentsPage() {
                             >
                               ⭐ Laisser un avis
                             </button>
+                          )}
+                          {/* Bouton de paiement KKIAPAY pour les rendez-vous non payés */}
+                          {apt.paymentStatus !== 'paid' && apt.status !== 'cancelled' && apt.serviceId && (
+                            <div className="mt-2">
+                              <KkiapayButton
+                                appointmentId={apt._id}
+                                amount={apt.serviceId.price || 0}
+                                currency="XOF"
+                                onSuccess={() => {
+                                  console.log('Paiement initié pour le rendez-vous:', apt._id);
+                                  // Recharger les rendez-vous après succès
+                                  setTimeout(() => {
+                                    loadAppointments();
+                                  }, 2000);
+                                }}
+                                onError={(error) => {
+                                  console.error('Erreur de paiement:', error);
+                                  // Ne pas afficher d'alert, l'erreur est déjà affichée par le composant
+                                }}
+                                buttonText={`💳 Payer ${(apt.serviceId.price || 0).toLocaleString()} XOF`}
+                                className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold transition-all duration-200 text-center shadow-md hover:shadow-xl hover:scale-105 active:scale-95"
+                              />
+                            </div>
                           )}
                         </div>
                       </div>

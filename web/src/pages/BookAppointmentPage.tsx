@@ -4,6 +4,7 @@ import { api } from "../api/client";
 import { useAuthStore } from "../store/auth";
 import ImageUpload from "../components/ImageUpload/ImageUpload";
 import PaymentForm from "../components/Payment/PaymentForm";
+import KkiapayButton from "../components/Payment/KkiapayButton";
 
 interface Garage {
   _id: string;
@@ -48,6 +49,7 @@ export default function BookAppointmentPage() {
   const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>("");
   const [vehiclePhotos, setVehiclePhotos] = useState<string[]>([]);
   const [showPayment, setShowPayment] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'kkiapay'>('kkiapay');
   const [createdAppointment, setCreatedAppointment] = useState<any>(null);
 
   // Horaires disponibles (9h-18h, par créneaux de 30min)
@@ -433,23 +435,89 @@ export default function BookAppointmentPage() {
 
               {showPayment && createdAppointment && selectedServiceData?.price ? (
                 <div className="border-t pt-6" style={{ borderColor: 'var(--color-racine-200)' }}>
-                  <PaymentForm
-                    appointmentId={createdAppointment._id}
-                    amount={selectedServiceData.price}
-                    onSuccess={() => {
-                      setSuccess(true);
-                      setTimeout(() => {
-                        navigate("/app/appointments", { replace: true });
-                      }, 2000);
-                    }}
-                    onCancel={() => {
-                      setShowPayment(false);
-                      setSuccess(true);
-                      setTimeout(() => {
-                        navigate("/app/appointments", { replace: true });
-                      }, 2000);
-                    }}
-                  />
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-noir-700)' }}>
+                      Méthode de paiement
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="kkiapay"
+                          checked={paymentMethod === 'kkiapay'}
+                          onChange={(e) => setPaymentMethod(e.target.value as 'kkiapay' | 'stripe')}
+                          className="w-4 h-4"
+                          style={{ accentColor: 'var(--color-racine-600)' }}
+                        />
+                        <span className="text-sm" style={{ color: 'var(--color-noir-700)' }}>KKIAPAY (Mobile Money)</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="stripe"
+                          checked={paymentMethod === 'stripe'}
+                          onChange={(e) => setPaymentMethod(e.target.value as 'kkiapay' | 'stripe')}
+                          className="w-4 h-4"
+                          style={{ accentColor: 'var(--color-racine-600)' }}
+                        />
+                        <span className="text-sm" style={{ color: 'var(--color-noir-700)' }}>Stripe (Carte bancaire)</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {paymentMethod === 'stripe' ? (
+                    <PaymentForm
+                      appointmentId={createdAppointment._id}
+                      amount={selectedServiceData.price}
+                      onSuccess={() => {
+                        setSuccess(true);
+                        setTimeout(() => {
+                          navigate("/app/appointments", { replace: true });
+                        }, 2000);
+                      }}
+                      onCancel={() => {
+                        setShowPayment(false);
+                        setSuccess(true);
+                        setTimeout(() => {
+                          navigate("/app/appointments", { replace: true });
+                        }, 2000);
+                      }}
+                    />
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="p-4 bg-racine-50 rounded-lg">
+                        <p className="text-sm mb-2" style={{ color: 'var(--color-noir-700)' }}>
+                          <strong>Montant à payer:</strong> {selectedServiceData.price} XOF
+                        </p>
+                        <p className="text-xs" style={{ color: 'var(--color-noir-600)' }}>
+                          Vous serez redirigé vers la page de paiement KKIAPAY
+                        </p>
+                      </div>
+                      <KkiapayButton
+                        appointmentId={createdAppointment._id}
+                        amount={selectedServiceData.price}
+                        currency="XOF"
+                        onSuccess={() => {
+                          console.log('Paiement KKIAPAY initié');
+                        }}
+                        onError={(error) => {
+                          alert(`Erreur: ${error}`);
+                        }}
+                        buttonText={`Payer ${selectedServiceData.price} XOF avec KKIAPAY`}
+                      />
+                      <button
+                        onClick={() => {
+                          setShowPayment(false);
+                        }}
+                        className="w-full px-4 py-2 border-2 rounded-lg text-sm font-semibold transition-all duration-200"
+                        style={{ borderColor: 'var(--color-racine-200)', color: 'var(--color-noir-700)' }}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t" style={{ borderColor: 'var(--color-racine-200)' }}>
