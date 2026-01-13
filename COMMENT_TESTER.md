@@ -1,6 +1,6 @@
-# 🧪 Comment Tester KKIAPAY depuis l'Application
+# 🧪 Comment Tester FedaPay depuis l'Application
 
-Guide simple pour tester le paiement KKIAPAY directement depuis l'application.
+Guide simple pour tester le paiement FedaPay directement depuis l'application.
 
 ---
 
@@ -8,8 +8,8 @@ Guide simple pour tester le paiement KKIAPAY directement depuis l'application.
 
 ### Backend `.env`
 ```env
-KKIAPAY_SECRET_KEY=votre_secret_key
-KKIAPAY_PUBLIC_KEY=votre_public_key
+FEDAPAY_API_KEY=votre_api_key_fedapay
+FEDAPAY_ENVIRONMENT=sandbox
 FRONTEND_URL=http://localhost:5173
 ```
 
@@ -47,10 +47,10 @@ npm run dev
    - Cliquer sur "Confirmer la réservation"
 4. **Choisir le paiement** :
    - Cocher "Payer maintenant"
-   - **Sélectionner "KKIAPAY (Mobile Money)"**
-   - Cliquer sur "Payer X XOF avec KKIAPAY"
+   - **Sélectionner "FedaPay (Mobile Money)"**
+   - Cliquer sur "Payer X XOF avec FedaPay"
 5. **Vérifier** :
-   - ✅ Redirection vers la page KKIAPAY
+   - ✅ Redirection vers la page FedaPay
    - ✅ Ou message d'erreur si problème
 
 ---
@@ -61,7 +61,7 @@ npm run dev
 2. **Trouver un rendez-vous non payé**
 3. **Cliquer sur le bouton** : "💳 Payer X XOF"
 4. **Vérifier** :
-   - ✅ Redirection vers KKIAPAY
+   - ✅ Redirection vers FedaPay
    - ✅ Après paiement, redirection vers `/payment-success`
    - ✅ Le statut du rendez-vous est mis à jour
 
@@ -80,15 +80,15 @@ npm run dev
    - Le `paymentIntentId` est enregistré
 
 3. **Logs backend** :
-   - Vous devriez voir : `📥 Callback KKIAPAY reçu`
+   - Vous devriez voir : `📥 Callback FedaPay reçu`
    - Et : `✅ Rendez-vous mis à jour`
 
 ---
 
 ## 🐛 Problèmes courants
 
-### "KKIAPAY non configuré"
-→ Vérifiez `backend/.env`
+### "FedaPay non configuré"
+→ Vérifiez `backend/.env` (FEDAPAY_API_KEY et FEDAPAY_ENVIRONMENT)
 
 ### "Erreur lors de la création du paiement"
 → Vérifiez que vous êtes connecté en tant que client
@@ -103,8 +103,8 @@ npm run dev
 
 ## 📝 Notes
 
-- Le bouton KKIAPAY apparaît uniquement pour les rendez-vous **non payés**
-- Vous pouvez choisir entre **Stripe** et **KKIAPAY** lors de la réservation
+- Le bouton FedaPay apparaît uniquement pour les rendez-vous **non payés**
+- Vous pouvez choisir entre **Stripe** et **FedaPay** lors de la réservation
 - Après paiement, vous êtes automatiquement redirigé vers la page de succès
 
 ---

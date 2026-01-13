@@ -90,7 +90,7 @@ export default function App() {
         />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        {/* Pages de callback KKIAPAY (publiques) */}
+        {/* Pages de callback FedaPay (publiques) */}
         <Route path="/payment-success" element={<PaymentSuccessPage />} />
         <Route path="/payment-cancel" element={<PaymentCancelPage />} />
       {/* Espace Admin */}

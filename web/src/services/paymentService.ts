@@ -34,14 +34,14 @@ export interface PaymentStatus {
 }
 
 /**
- * Service de paiement KKIAPAY
+ * Service de paiement FedaPay
  * 
- * Ce service gère toutes les interactions avec l'API de paiement KKIAPAY
+ * Ce service gère toutes les interactions avec l'API de paiement FedaPay
  * via le backend. Le frontend ne gère jamais les clés secrètes.
  */
 class PaymentService {
   /**
-   * Créer un paiement KKIAPAY
+   * Créer un paiement FedaPay
    * 
    * @param params - Paramètres du paiement (appointmentId ou invoiceId, amount, etc.)
    * @returns Promise avec les données de la transaction (transactionId, paymentUrl)
@@ -49,7 +49,7 @@ class PaymentService {
    */
   async createPayment(params: CreatePaymentParams): Promise<PaymentResponse> {
     try {
-      const response = await api.post<PaymentResponse>('/payments/kkiapay/create', {
+      const response = await api.post<PaymentResponse>('/payments/fedapay/create', {
         appointmentId: params.appointmentId,
         invoiceId: params.invoiceId,
         amount: params.amount,
@@ -73,7 +73,7 @@ class PaymentService {
   }
 
   /**
-   * Vérifier le statut d'une transaction KKIAPAY
+   * Vérifier le statut d'une transaction FedaPay
    * 
    * @param transactionId - ID de la transaction à vérifier
    * @returns Promise avec le statut de la transaction
@@ -81,7 +81,7 @@ class PaymentService {
    */
   async checkPaymentStatus(transactionId: string): Promise<PaymentStatus> {
     try {
-      const response = await api.get<PaymentStatus>(`/payments/kkiapay/status/${transactionId}`);
+      const response = await api.get<PaymentStatus>(`/payments/fedapay/status/${transactionId}`);
       return response.data;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 
@@ -92,7 +92,7 @@ class PaymentService {
   }
 
   /**
-   * Rediriger l'utilisateur vers la page de paiement KKIAPAY
+   * Rediriger l'utilisateur vers la page de paiement FedaPay
    * 
    * @param paymentUrl - URL de paiement retournée par l'API
    */

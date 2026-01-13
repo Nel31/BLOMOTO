@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { paymentService, CreatePaymentParams } from '../../services/paymentService';
 import { useAuthStore } from '../../store/auth';
 
-interface KkiapayButtonProps {
+interface FedapayButtonProps {
   /** ID du rendez-vous (optionnel si invoiceId est fourni) */
   appointmentId?: string;
   /** ID de la facture (optionnel si appointmentId est fourni) */
@@ -30,16 +30,16 @@ interface KkiapayButtonProps {
 }
 
 /**
- * Composant bouton de paiement KKIAPAY
+ * Composant bouton de paiement FedaPay
  * 
- * Ce composant gère l'intégration complète du paiement KKIAPAY :
+ * Ce composant gère l'intégration complète du paiement FedaPay :
  * - Création de la transaction via le backend
- * - Redirection vers la page de paiement KKIAPAY
+ * - Redirection vers la page de paiement FedaPay
  * - Gestion des erreurs
  * 
  * @example
  * ```tsx
- * <KkiapayButton
+ * <FedapayButton
  *   appointmentId="123"
  *   amount={5000}
  *   onSuccess={() => console.log('Paiement initié')}
@@ -47,7 +47,7 @@ interface KkiapayButtonProps {
  * />
  * ```
  */
-export default function KkiapayButton({
+export default function FedapayButton({
   appointmentId,
   invoiceId,
   amount,
@@ -60,7 +60,7 @@ export default function KkiapayButton({
   buttonText,
   className = '',
   disabled = false,
-}: KkiapayButtonProps) {
+}: FedapayButtonProps) {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const user = useAuthStore((state) => state.user);
@@ -105,13 +105,13 @@ export default function KkiapayButton({
       // Appeler le callback de succès
       onSuccess?.();
 
-      // Rediriger vers la page de paiement KKIAPAY
+      // Rediriger vers la page de paiement FedaPay
       paymentService.redirectToPayment(paymentData.paymentUrl);
     } catch (err: any) {
       const errorMessage = err.message || 'Erreur lors de la création du paiement';
       setError(errorMessage);
       onError?.(errorMessage);
-      console.error('Erreur paiement KKIAPAY:', err);
+      console.error('Erreur paiement FedaPay:', err);
     } finally {
       setProcessing(false);
     }
@@ -168,7 +168,7 @@ export default function KkiapayButton({
         ) : (
           <>
             <span>💳</span>
-            <span>{buttonText || `Payer ${amount.toLocaleString()} ${currency} avec KKIAPAY`}</span>
+            <span>{buttonText || `Payer ${amount.toLocaleString()} ${currency} avec FedaPay`}</span>
           </>
         )}
       </button>
@@ -181,4 +181,3 @@ export default function KkiapayButton({
     </div>
   );
 }
-

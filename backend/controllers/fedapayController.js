@@ -1,20 +1,25 @@
-const axios = require('axios');
+const { FedaPay, Transaction, Customer } = require('fedapay');
 const Appointment = require('../models/Appointment');
 const Invoice = require('../models/Invoice');
 
-const KKIAPAY_SECRET_KEY = process.env.KKIAPAY_SECRET_KEY;
-const KKIAPAY_PUBLIC_KEY = process.env.KKIAPAY_PUBLIC_KEY;
-const KKIAPAY_API_URL = process.env.KKIAPAY_API_URL || 'https://api.kkiapay.me';
+const FEDAPAY_API_KEY = process.env.FEDAPAY_API_KEY;
+const FEDAPAY_ENVIRONMENT = process.env.FEDAPAY_ENVIRONMENT || 'sandbox'; // 'sandbox' ou 'live'
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-// @desc    Créer un paiement KKIAPAY
-// @route   POST /api/payments/kkiapay/create
+// Configurer FedaPay
+if (FEDAPAY_API_KEY) {
+  FedaPay.setApiKey(FEDAPAY_API_KEY);
+  FedaPay.setEnvironment(FEDAPAY_ENVIRONMENT);
+}
+
+// @desc    Créer un paiement FedaPay
+// @route   POST /api/payments/fedapay/create
 // @access  Private/Client
-exports.createKkiapayPayment = async (req, res) => {
+exports.createFedapayPayment = async (req, res) => {
   try {
-    if (!KKIAPAY_SECRET_KEY || !KKIAPAY_PUBLIC_KEY) {
+    if (!FEDAPAY_API_KEY) {
       return res.status(500).json({ 
-        message: 'KKIAPAY non configuré. Configurez KKIAPAY_SECRET_KEY et KKIAPAY_PUBLIC_KEY dans votre .env' 
+        message: 'FedaPay non configuré. Configurez FEDAPAY_API_KEY dans votre .env' 
       });
     }
 
@@ -54,80 +59,114 @@ exports.createKkiapayPayment = async (req, res) => {
     }
 
     // Construire les URLs
-    // Le callback doit pointer vers le backend (pour la vérification serveur à serveur)
     const backendBaseUrl = `${req.protocol}://${req.get('host')}`;
-    const callbackUrl = `${backendBaseUrl}/api/payments/kkiapay/callback`;
-    
-    // Les URLs de retour pointent vers le frontend
+    const callbackUrl = `${backendBaseUrl}/api/payments/fedapay/callback`;
     const returnUrl = `${FRONTEND_URL}/payment-success`;
     const cancelUrl = `${FRONTEND_URL}/payment-cancel`;
 
-    // Créer la transaction KKIAPAY
     try {
-      const response = await axios.post(`${KKIAPAY_API_URL}/v1/transactions`, {
-        amount: Math.round(amount), // Montant en unité de la devise (XOF, FCFA, etc.)
-        currency: currency,
-        customer_email: customerEmail || req.user.email,
-        customer_phone: customerPhone || req.user.phone,
-        customer_name: customerName || req.user.name,
+      // Créer ou récupérer le client FedaPay
+      let customer = null;
+      const customerEmailToUse = customerEmail || req.user.email;
+      const customerNameToUse = customerName || req.user.name;
+      const customerPhoneToUse = customerPhone || req.user.phone;
+
+      // Extraire le prénom et nom si possible
+      const nameParts = customerNameToUse ? customerNameToUse.split(' ') : [];
+      const firstname = nameParts[0] || 'Client';
+      const lastname = nameParts.slice(1).join(' ') || 'Promoto';
+
+      // Créer le client FedaPay
+      try {
+        customer = await Customer.create({
+          firstname: firstname,
+          lastname: lastname,
+          email: customerEmailToUse,
+          phone_number: customerPhoneToUse ? {
+            number: customerPhoneToUse.replace(/\D/g, ''), // Supprimer les caractères non numériques
+            country: 'BJ' // Par défaut Bénin, peut être configuré
+          } : undefined
+        });
+      } catch (customerError) {
+        console.warn('Erreur création client FedaPay (continuer quand même):', customerError.message);
+        // Continuer sans client si l'email existe déjà ou autre erreur
+      }
+
+      // Créer la transaction FedaPay
+      const transactionData = {
+        description: referenceType === 'appointment' 
+          ? `Paiement rendez-vous #${referenceId}` 
+          : `Paiement facture #${referenceId}`,
+        amount: Math.round(amount),
+        currency: { iso: currency },
         callback_url: callbackUrl,
-        return_url: returnUrl,
-        cancel_url: cancelUrl,
+        customer: customer ? { id: customer.id } : undefined,
         metadata: {
           userId: req.user._id.toString(),
           referenceId: referenceId.toString(),
           referenceType: referenceType,
-        },
-      }, {
-        headers: {
-          'Authorization': `Bearer ${KKIAPAY_SECRET_KEY}`,
-          'Content-Type': 'application/json'
         }
-      });
+      };
+
+      // Ajouter les URLs de retour si supportées
+      if (returnUrl) {
+        transactionData.return_url = returnUrl;
+      }
+      if (cancelUrl) {
+        transactionData.cancel_url = cancelUrl;
+      }
+
+      const transaction = await Transaction.create(transactionData);
+
+      // Récupérer l'URL de paiement
+      const paymentUrl = transaction.to_payload?.redirect_url || 
+                        transaction.redirect_url || 
+                        transaction.url ||
+                        `https://pay.fedapay.com/${transaction.id}`;
 
       res.json({
         success: true,
-        transactionId: response.data.transaction_id || response.data.id,
-        paymentUrl: response.data.payment_url || response.data.url,
-        publicKey: KKIAPAY_PUBLIC_KEY,
-        ...response.data
+        transactionId: transaction.id?.toString() || transaction.id,
+        paymentUrl: paymentUrl,
+        ...transaction
       });
     } catch (apiError) {
-      console.error('Erreur API KKIAPAY:', apiError.response?.data || apiError.message);
+      console.error('Erreur API FedaPay:', apiError.response?.data || apiError.message || apiError);
       return res.status(500).json({ 
-        message: 'Erreur lors de la création du paiement KKIAPAY',
-        error: apiError.response?.data || apiError.message
+        message: 'Erreur lors de la création du paiement FedaPay',
+        error: apiError.response?.data || apiError.message || apiError.toString()
       });
     }
   } catch (error) {
-    console.error('Erreur createKkiapayPayment:', error);
+    console.error('Erreur createFedapayPayment:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Vérifier le statut d'un paiement KKIAPAY
-// @route   GET /api/payments/kkiapay/status/:transactionId
+// @desc    Vérifier le statut d'un paiement FedaPay
+// @route   GET /api/payments/fedapay/status/:transactionId
 // @access  Private
-exports.checkKkiapayStatus = async (req, res) => {
+exports.checkFedapayStatus = async (req, res) => {
   try {
-    if (!KKIAPAY_SECRET_KEY) {
-      return res.status(500).json({ message: 'KKIAPAY non configuré' });
+    if (!FEDAPAY_API_KEY) {
+      return res.status(500).json({ message: 'FedaPay non configuré' });
     }
 
     const { transactionId } = req.params;
 
     try {
-      const response = await axios.get(`${KKIAPAY_API_URL}/v1/transactions/${transactionId}`, {
-        headers: {
-          'Authorization': `Bearer ${KKIAPAY_SECRET_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const transaction = response.data;
+      const transaction = await Transaction.retrieve(transactionId);
 
       // Mettre à jour le statut si le paiement est réussi
-      if (transaction.status === 'SUCCESS' || transaction.status === 'success') {
+      const status = transaction.status || transaction.state;
+      const isSuccess = status === 'approved' || 
+                       status === 'APPROVED' || 
+                       status === 'completed' ||
+                       status === 'COMPLETED' ||
+                       status === 'paid' ||
+                       status === 'PAID';
+
+      if (isSuccess) {
         const metadata = transaction.metadata || {};
         const referenceId = metadata.referenceId;
         const referenceType = metadata.referenceType;
@@ -140,33 +179,33 @@ exports.checkKkiapayStatus = async (req, res) => {
         } else if (referenceType === 'invoice' && referenceId) {
           await Invoice.findByIdAndUpdate(referenceId, {
             status: 'paid',
-            paidAmount: transaction.amount,
+            paidAmount: transaction.amount || transaction.total_amount,
             paidAt: new Date(),
-            paymentMethod: 'kkiapay',
+            paymentMethod: 'fedapay',
           });
         }
       }
 
       res.json({
         success: true,
-        status: transaction.status,
+        status: status,
         transaction: transaction
       });
     } catch (apiError) {
-      console.error('Erreur vérification statut KKIAPAY:', apiError.response?.data || apiError.message);
+      console.error('Erreur vérification statut FedaPay:', apiError.response?.data || apiError.message || apiError);
       return res.status(500).json({ 
         message: 'Erreur lors de la vérification du statut',
-        error: apiError.response?.data || apiError.message
+        error: apiError.response?.data || apiError.message || apiError.toString()
       });
     }
   } catch (error) {
-    console.error('Erreur checkKkiapayStatus:', error);
+    console.error('Erreur checkFedapayStatus:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
 /**
- * Vérifier le statut d'une transaction directement auprès de l'API KKIAPAY
+ * Vérifier le statut d'une transaction directement auprès de l'API FedaPay
  * 
  * ⚠️ IMPORTANT : Cette fonction effectue une vérification serveur à serveur
  * pour s'assurer que le paiement est réellement réussi et éviter la fraude.
@@ -174,54 +213,48 @@ exports.checkKkiapayStatus = async (req, res) => {
  * @param {string} transactionId - ID de la transaction à vérifier
  * @returns {Promise<Object|null>} Données de la transaction ou null si erreur
  */
-async function verifyPaymentWithKkiapay(transactionId) {
+async function verifyPaymentWithFedapay(transactionId) {
   try {
-    if (!KKIAPAY_SECRET_KEY) {
-      console.error('KKIAPAY_SECRET_KEY non configuré');
+    if (!FEDAPAY_API_KEY) {
+      console.error('FEDAPAY_API_KEY non configuré');
       return null;
     }
 
-    const response = await axios.get(`${KKIAPAY_API_URL}/v1/transactions/${transactionId}`, {
-      headers: {
-        'Authorization': `Bearer ${KKIAPAY_SECRET_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    return response.data;
+    const transaction = await Transaction.retrieve(transactionId);
+    return transaction;
   } catch (error) {
-    console.error('Erreur vérification transaction KKIAPAY:', error.response?.data || error.message);
+    console.error('Erreur vérification transaction FedaPay:', error.response?.data || error.message || error);
     return null;
   }
 }
 
-// @desc    Callback webhook KKIAPAY
-// @route   POST /api/payments/kkiapay/callback
+// @desc    Callback webhook FedaPay
+// @route   POST /api/payments/fedapay/callback
 // @access  Public
-exports.kkiapayCallback = async (req, res) => {
+exports.fedapayCallback = async (req, res) => {
   // Logger le callback pour audit
-  console.log('📥 Callback KKIAPAY reçu:', {
+  console.log('📥 Callback FedaPay reçu:', {
     timestamp: new Date().toISOString(),
     body: req.body,
     ip: req.ip || req.connection.remoteAddress,
   });
 
   try {
-    const { transaction_id, status, amount, metadata } = req.body;
+    const { transaction_id, id, status, state, amount, metadata } = req.body;
+    const transactionId = transaction_id || id;
 
-    if (!transaction_id) {
-      console.warn('⚠️ Callback KKIAPAY: transaction_id manquant');
+    if (!transactionId) {
+      console.warn('⚠️ Callback FedaPay: transaction_id manquant');
       return res.status(400).json({ message: 'transaction_id manquant' });
     }
 
-    // ⚠️ SÉCURITÉ : Vérifier le paiement via l'API KKIAPAY (serveur à serveur)
+    // ⚠️ SÉCURITÉ : Vérifier le paiement via l'API FedaPay (serveur à serveur)
     // Ne jamais faire confiance aux données reçues sans vérification
-    const verifiedTransaction = await verifyPaymentWithKkiapay(transaction_id);
+    const verifiedTransaction = await verifyPaymentWithFedapay(transactionId);
 
     if (!verifiedTransaction) {
-      console.error('❌ Échec de la vérification de la transaction:', transaction_id);
-      // Répondre quand même 200 à KKIAPAY pour éviter les retries inutiles
-      // mais ne pas mettre à jour la base de données
+      console.error('❌ Échec de la vérification de la transaction:', transactionId);
+      // Répondre quand même 200 à FedaPay pour éviter les retries inutiles
       return res.status(200).json({ 
         received: true, 
         status: 'verification_failed',
@@ -229,19 +262,21 @@ exports.kkiapayCallback = async (req, res) => {
       });
     }
 
-    // Vérifier que le statut est bien SUCCESS
-    const verifiedStatus = verifiedTransaction.status || verifiedTransaction.transaction_status;
-    const isSuccess = verifiedStatus === 'SUCCESS' || 
-                     verifiedStatus === 'success' || 
-                     verifiedStatus === 'SUCCEEDED' ||
-                     verifiedStatus === 'succeeded';
+    // Vérifier que le statut est bien réussi
+    const verifiedStatus = verifiedTransaction.status || verifiedTransaction.state;
+    const isSuccess = verifiedStatus === 'approved' || 
+                     verifiedStatus === 'APPROVED' || 
+                     verifiedStatus === 'completed' ||
+                     verifiedStatus === 'COMPLETED' ||
+                     verifiedStatus === 'paid' ||
+                     verifiedStatus === 'PAID';
 
     if (!isSuccess) {
       console.log('ℹ️ Transaction non réussie:', {
-        transaction_id,
+        transactionId,
         status: verifiedStatus,
       });
-      // Répondre 200 à KKIAPAY mais ne rien faire
+      // Répondre 200 à FedaPay mais ne rien faire
       return res.status(200).json({ 
         received: true, 
         status: 'not_success',
@@ -250,10 +285,10 @@ exports.kkiapayCallback = async (req, res) => {
     }
 
     // Vérifier que le montant correspond (sécurité supplémentaire)
-    const verifiedAmount = verifiedTransaction.amount || verifiedTransaction.transaction_amount;
+    const verifiedAmount = verifiedTransaction.amount || verifiedTransaction.total_amount;
     if (amount && verifiedAmount && Math.abs(amount - verifiedAmount) > 1) {
       console.warn('⚠️ Montant incohérent:', {
-        transaction_id,
+        transactionId,
         received_amount: amount,
         verified_amount: verifiedAmount,
       });
@@ -267,7 +302,7 @@ exports.kkiapayCallback = async (req, res) => {
 
     if (!referenceId || !referenceType) {
       console.warn('⚠️ Métadonnées manquantes:', {
-        transaction_id,
+        transactionId,
         metadata: transactionMetadata,
       });
       // Répondre 200 mais ne rien faire
@@ -285,9 +320,9 @@ exports.kkiapayCallback = async (req, res) => {
         if (appointment && appointment.paymentStatus !== 'paid') {
           await Appointment.findByIdAndUpdate(referenceId, {
             paymentStatus: 'paid',
-            paymentIntentId: transaction_id,
+            paymentIntentId: transactionId,
             paidAt: new Date(),
-            paymentMethod: 'kkiapay',
+            paymentMethod: 'fedapay',
           });
           console.log('✅ Rendez-vous mis à jour:', referenceId);
         }
@@ -298,7 +333,7 @@ exports.kkiapayCallback = async (req, res) => {
             status: 'paid',
             paidAmount: verifiedAmount || amount || invoice.total,
             paidAt: new Date(),
-            paymentMethod: 'kkiapay',
+            paymentMethod: 'fedapay',
           });
           console.log('✅ Facture mise à jour:', referenceId);
         }
@@ -307,17 +342,17 @@ exports.kkiapayCallback = async (req, res) => {
       }
     } catch (dbError) {
       console.error('❌ Erreur mise à jour base de données:', dbError);
-      // Répondre quand même 200 à KKIAPAY
+      // Répondre quand même 200 à FedaPay
     }
 
-    // Répondre rapidement à KKIAPAY (important pour éviter les retries)
+    // Répondre rapidement à FedaPay (important pour éviter les retries)
     res.status(200).json({ 
       received: true, 
       status: 'ok',
       message: 'Paiement traité avec succès'
     });
   } catch (error) {
-    console.error('❌ Erreur kkiapayCallback:', error);
+    console.error('❌ Erreur fedapayCallback:', error);
     // Répondre 200 même en cas d'erreur pour éviter les retries
     // Mais logger l'erreur pour investigation
     res.status(200).json({ 
@@ -327,4 +362,3 @@ exports.kkiapayCallback = async (req, res) => {
     });
   }
 };
-

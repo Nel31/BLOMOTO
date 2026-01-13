@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuthStore } from "../store/auth";
 import ChatWindow from "../components/Chat/ChatWindow";
-import KkiapayButton from "../components/Payment/KkiapayButton";
+import FedapayButton from "../components/Payment/FedapayButton";
 
 interface Appointment {
   _id: string;
@@ -375,10 +375,10 @@ export default function AppointmentsPage() {
                               ⭐ Laisser un avis
                             </button>
                           )}
-                          {/* Bouton de paiement KKIAPAY pour les rendez-vous non payés */}
+                          {/* Bouton de paiement FedaPay pour les rendez-vous non payés */}
                           {apt.paymentStatus !== 'paid' && apt.status !== 'cancelled' && apt.serviceId && (
                             <div className="mt-2">
-                              <KkiapayButton
+                              <FedapayButton
                                 appointmentId={apt._id}
                                 amount={apt.serviceId.price || 0}
                                 currency="XOF"

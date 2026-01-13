@@ -28,6 +28,15 @@ CLOUDINARY_API_SECRET=your-api-secret
 # Google Maps API (pour le backend si nécessaire)
 # Obtenez cette clé sur https://console.cloud.google.com/
 GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+
+# FedaPay Configuration (pour les paiements Mobile Money)
+# Obtenez votre clé API sur https://fedapay.com
+# Mode sandbox pour les tests, live pour la production
+FEDAPAY_API_KEY=votre_api_key_fedapay
+FEDAPAY_ENVIRONMENT=sandbox  # 'sandbox' pour les tests, 'live' pour la production
+
+# Frontend URL (pour les callbacks de paiement)
+FRONTEND_URL=http://localhost:5173
 ```
 
 ### Conseils

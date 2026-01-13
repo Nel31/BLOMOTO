@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { paymentService } from '../services/paymentService';
 
 /**
- * Page de succès après paiement KKIAPAY
+ * Page de succès après paiement FedaPay
  * 
  * Cette page est appelée après un paiement réussi.
  * Elle vérifie le statut de la transaction et affiche un message de confirmation.

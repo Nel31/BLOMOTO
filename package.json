@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "kkiapay": "^2.0.38"
+    "fedapay": "^1.0.0"
   }
 }

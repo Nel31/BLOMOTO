@@ -7,16 +7,16 @@ const {
   stripeWebhook,
 } = require('../controllers/paymentController');
 const {
-  createKkiapayPayment,
-  checkKkiapayStatus,
-  kkiapayCallback,
-} = require('../controllers/kkiapayController');
+  createFedapayPayment,
+  checkFedapayStatus,
+  fedapayCallback,
+} = require('../controllers/fedapayController');
 
 // Webhook Stripe (doit être avant express.json())
 router.post('/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 
-// Callback KKIAPAY (public, pas besoin d'authentification)
-router.post('/kkiapay/callback', kkiapayCallback);
+// Callback FedaPay (public, pas besoin d'authentification)
+router.post('/fedapay/callback', fedapayCallback);
 
 // Routes protégées
 router.use(protect);
@@ -25,12 +25,12 @@ router.use(protect);
 router.post('/stripe/create-intent', authorize('client'), createPaymentIntent);
 router.post('/stripe/confirm', authorize('client'), confirmPayment);
 
-// Routes KKIAPAY
-router.post('/kkiapay/create', authorize('client'), createKkiapayPayment);
-router.get('/kkiapay/status/:transactionId', checkKkiapayStatus);
+// Routes FedaPay
+router.post('/fedapay/create', authorize('client'), createFedapayPayment);
+router.get('/fedapay/status/:transactionId', checkFedapayStatus);
 
-// Route de compatibilité (redirige vers KKIAPAY par défaut)
-router.post('/create-payment', authorize('client'), createKkiapayPayment);
+// Route de compatibilité (redirige vers FedaPay par défaut)
+router.post('/create-payment', authorize('client'), createFedapayPayment);
 
 module.exports = router;
 

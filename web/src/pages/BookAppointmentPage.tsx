@@ -4,7 +4,7 @@ import { api } from "../api/client";
 import { useAuthStore } from "../store/auth";
 import ImageUpload from "../components/ImageUpload/ImageUpload";
 import PaymentForm from "../components/Payment/PaymentForm";
-import KkiapayButton from "../components/Payment/KkiapayButton";
+import FedapayButton from "../components/Payment/FedapayButton";
 
 interface Garage {
   _id: string;
@@ -49,7 +49,7 @@ export default function BookAppointmentPage() {
   const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>("");
   const [vehiclePhotos, setVehiclePhotos] = useState<string[]>([]);
   const [showPayment, setShowPayment] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'kkiapay'>('kkiapay');
+  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'fedapay'>('fedapay');
   const [createdAppointment, setCreatedAppointment] = useState<any>(null);
 
   // Horaires disponibles (9h-18h, par créneaux de 30min)
@@ -444,13 +444,13 @@ export default function BookAppointmentPage() {
                         <input
                           type="radio"
                           name="paymentMethod"
-                          value="kkiapay"
-                          checked={paymentMethod === 'kkiapay'}
-                          onChange={(e) => setPaymentMethod(e.target.value as 'kkiapay' | 'stripe')}
+                          value="fedapay"
+                          checked={paymentMethod === 'fedapay'}
+                          onChange={(e) => setPaymentMethod(e.target.value as 'fedapay' | 'stripe')}
                           className="w-4 h-4"
                           style={{ accentColor: 'var(--color-racine-600)' }}
                         />
-                        <span className="text-sm" style={{ color: 'var(--color-noir-700)' }}>KKIAPAY (Mobile Money)</span>
+                        <span className="text-sm" style={{ color: 'var(--color-noir-700)' }}>FedaPay (Mobile Money)</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
@@ -458,7 +458,7 @@ export default function BookAppointmentPage() {
                           name="paymentMethod"
                           value="stripe"
                           checked={paymentMethod === 'stripe'}
-                          onChange={(e) => setPaymentMethod(e.target.value as 'kkiapay' | 'stripe')}
+                          onChange={(e) => setPaymentMethod(e.target.value as 'fedapay' | 'stripe')}
                           className="w-4 h-4"
                           style={{ accentColor: 'var(--color-racine-600)' }}
                         />
@@ -492,20 +492,20 @@ export default function BookAppointmentPage() {
                           <strong>Montant à payer:</strong> {selectedServiceData.price} XOF
                         </p>
                         <p className="text-xs" style={{ color: 'var(--color-noir-600)' }}>
-                          Vous serez redirigé vers la page de paiement KKIAPAY
+                          Vous serez redirigé vers la page de paiement FedaPay
                         </p>
                       </div>
-                      <KkiapayButton
+                      <FedapayButton
                         appointmentId={createdAppointment._id}
                         amount={selectedServiceData.price}
                         currency="XOF"
                         onSuccess={() => {
-                          console.log('Paiement KKIAPAY initié');
+                          console.log('Paiement FedaPay initié');
                         }}
                         onError={(error) => {
                           alert(`Erreur: ${error}`);
                         }}
-                        buttonText={`Payer ${selectedServiceData.price} XOF avec KKIAPAY`}
+                        buttonText={`Payer ${selectedServiceData.price} XOF avec FedaPay`}
                       />
                       <button
                         onClick={() => {

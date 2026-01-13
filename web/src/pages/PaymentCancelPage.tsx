@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 /**
- * Page d'annulation après paiement KKIAPAY
+ * Page d'annulation après paiement FedaPay
  * 
  * Cette page est appelée lorsque l'utilisateur annule le paiement
  * ou que le paiement échoue.
