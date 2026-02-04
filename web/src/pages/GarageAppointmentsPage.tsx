@@ -239,7 +239,7 @@ export default function GarageAppointmentsPage() {
                               </p>
                               {apt.serviceId?.price && (
                                 <p className="text-sm mb-2" style={{ color: 'var(--color-rouge-600)' }}>
-                                  💰 {apt.serviceId.price}€
+                                  💰 {(apt.serviceId.price || 0).toLocaleString()} XOF
                                 </p>
                               )}
                               {apt.notes && (

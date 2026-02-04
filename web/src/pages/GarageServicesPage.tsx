@@ -308,15 +308,15 @@ export default function GarageServicesPage() {
                 {priceType === "fixe" && (
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-noir-700)' }}>
-                      Prix (€)
+                      Prix (XOF)
                     </label>
                     <input
                       type="number"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                       min="0"
-                      step="0.01"
-                      placeholder="0.00"
+                      step="1"
+                      placeholder="0"
                       className="w-full px-4 py-2.5 rounded-lg border-2 outline-none transition-all duration-300 text-sm focus:ring-2 focus:ring-offset-2"
                       style={{ borderColor: 'var(--color-racine-200)', color: 'var(--color-noir)' }}
                       onFocus={(e) => {
@@ -333,14 +333,14 @@ export default function GarageServicesPage() {
                 {priceType !== "sur-devis" && (
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-noir-700)' }}>
-                      Prix indicatif (€)
+                      Prix indicatif (XOF)
                     </label>
                     <input
                       type="number"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                       min="0"
-                      step="0.01"
+                      step="1"
                       placeholder="0.00"
                       className="w-full px-4 py-2.5 rounded-lg border-2 outline-none transition-all duration-300 text-sm focus:ring-2 focus:ring-offset-2"
                       style={{ borderColor: 'var(--color-racine-200)', color: 'var(--color-noir)' }}
@@ -486,7 +486,7 @@ export default function GarageServicesPage() {
                     <span style={{ color: 'var(--color-noir-600)' }}>💰</span>
                     <span style={{ color: 'var(--color-noir-700)' }}>
                       {getPriceTypeLabel(service.priceType)}
-                      {service.price && ` - ${service.price}€`}
+                    {service.price && ` - ${(service.price || 0).toLocaleString()} XOF`}
                     </span>
                   </div>
                   {service.duration && (

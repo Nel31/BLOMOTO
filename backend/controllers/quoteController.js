@@ -171,7 +171,7 @@ exports.sendQuote = async (req, res) => {
         senderId: user._id,
         receiverId: quote.clientId._id,
         appointmentId: quote.appointmentId?._id || null,
-        content: `Devis ${quote.quoteNumber} - Montant total: ${quote.total.toFixed(2)}€`,
+        content: `Devis ${quote.quoteNumber} - Montant total: ${quote.total.toLocaleString('fr-FR')} XOF`,
         attachments: [quote.pdfUrl],
       });
 
@@ -192,7 +192,7 @@ exports.sendQuote = async (req, res) => {
           <p>Vous avez reçu un nouveau devis de la part de ${quote.garageId.name}.</p>
           <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>N° Devis:</strong> ${quote.quoteNumber}</p>
-            <p><strong>Montant total:</strong> ${quote.total.toFixed(2)}€</p>
+            <p><strong>Montant total:</strong> ${quote.total.toLocaleString('fr-FR')} XOF</p>
             <p><strong>Valide jusqu'au:</strong> ${new Date(quote.validUntil).toLocaleDateString('fr-FR')}</p>
           </div>
           <p>Vous pouvez consulter le devis complet en pièce jointe.</p>

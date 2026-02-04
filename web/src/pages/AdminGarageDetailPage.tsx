@@ -373,7 +373,7 @@ export default function AdminGarageDetailPage() {
                       </span>
                     </div>
                     <p className="text-sm" style={{ color: 'var(--color-noir-600)' }}>
-                      {service.category} • {service.price ? `${service.price}€` : 'Prix variable'}
+                      {service.category} • {service.price ? `${service.price.toLocaleString()} XOF` : 'Prix variable'}
                     </p>
                   </div>
                 ))

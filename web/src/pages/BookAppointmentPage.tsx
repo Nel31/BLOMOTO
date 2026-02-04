@@ -271,7 +271,7 @@ export default function BookAppointmentPage() {
                 >
                   {services.map((service) => (
                     <option key={service._id} value={service._id}>
-                      {service.name} - {service.price}€ {service.duration && `(${service.duration} min)`}
+                      {service.name} - {(service.price || 0).toLocaleString()} XOF {service.duration && `(${service.duration} min)`}
                     </option>
                   ))}
                 </select>

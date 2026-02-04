@@ -207,7 +207,7 @@ export default function ClientQuotesPage() {
                           {quote.garageId.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: 'var(--color-rouge-600)' }}>
-                          {quote.total.toFixed(2)}€
+                          {quote.total.toLocaleString()} XOF
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
@@ -320,8 +320,8 @@ export default function ClientQuotesPage() {
                         <tr key={idx} className="border-b">
                           <td className="py-2 px-4" style={{ color: 'var(--color-noir)' }}>{item.description}</td>
                           <td className="text-right py-2 px-4" style={{ color: 'var(--color-noir)' }}>{item.quantity}</td>
-                          <td className="text-right py-2 px-4" style={{ color: 'var(--color-noir)' }}>{item.unitPrice.toFixed(2)}€</td>
-                          <td className="text-right py-2 px-4 font-semibold" style={{ color: 'var(--color-noir)' }}>{item.total.toFixed(2)}€</td>
+                          <td className="text-right py-2 px-4" style={{ color: 'var(--color-noir)' }}>{item.unitPrice.toLocaleString()} XOF</td>
+                          <td className="text-right py-2 px-4 font-semibold" style={{ color: 'var(--color-noir)' }}>{item.total.toLocaleString()} XOF</td>
                         </tr>
                       ))}
                     </tbody>
@@ -331,17 +331,17 @@ export default function ClientQuotesPage() {
                 <div className="border-t pt-4">
                   <div className="flex justify-between mb-2">
                     <span style={{ color: 'var(--color-noir-700)' }}>Sous-total</span>
-                    <span className="font-semibold" style={{ color: 'var(--color-noir)' }}>{selectedQuote.subtotal.toFixed(2)}€</span>
+                    <span className="font-semibold" style={{ color: 'var(--color-noir)' }}>{selectedQuote.subtotal.toLocaleString()} XOF</span>
                   </div>
                   {selectedQuote.taxRate > 0 && (
                     <div className="flex justify-between mb-2">
                     <span style={{ color: 'var(--color-noir-700)' }}>TVA ({selectedQuote.taxRate}%)</span>
-                    <span className="font-semibold" style={{ color: 'var(--color-noir)' }}>{selectedQuote.tax.toFixed(2)}€</span>
+                    <span className="font-semibold" style={{ color: 'var(--color-noir)' }}>{selectedQuote.tax.toLocaleString()} XOF</span>
                   </div>
                   )}
                   <div className="flex justify-between text-xl font-bold pt-2 border-t">
                     <span style={{ color: 'var(--color-noir)' }}>Total</span>
-                    <span style={{ color: 'var(--color-rouge-600)' }}>{selectedQuote.total.toFixed(2)}€</span>
+                    <span style={{ color: 'var(--color-rouge-600)' }}>{selectedQuote.total.toLocaleString()} XOF</span>
                   </div>
                 </div>
 

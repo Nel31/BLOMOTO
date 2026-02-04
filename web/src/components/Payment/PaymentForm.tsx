@@ -118,9 +118,9 @@ function PaymentFormContent({ appointmentId, amount, onSuccess, onCancel }: Paym
 
         <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--color-racine-50)' }}>
           <div className="flex justify-between items-center">
-            <span className="font-semibold" style={{ color: 'var(--color-noir-700)' }}>Total:</span>
+            <span className="font-semibold" style={{ color: 'var(--color-noir-700)' }}>Total à payer (XOF):</span>
             <span className="text-xl font-bold" style={{ color: 'var(--color-rouge-600)' }}>
-              {amount.toFixed(2)} €
+              {amount.toLocaleString()} XOF
             </span>
           </div>
         </div>
@@ -149,7 +149,7 @@ function PaymentFormContent({ appointmentId, amount, onSuccess, onCancel }: Paym
             style={{ backgroundColor: 'var(--color-rouge-600)', color: 'white' }}
           >
             <span className="relative z-10">
-              {processing ? 'Traitement...' : `Payer ${amount.toFixed(2)} €`}
+              {processing ? 'Traitement...' : `Payer ${amount.toLocaleString()} XOF`}
             </span>
           </button>
         </div>

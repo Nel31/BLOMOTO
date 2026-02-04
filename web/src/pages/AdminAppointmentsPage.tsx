@@ -205,7 +205,7 @@ export default function AdminAppointmentsPage() {
                         {apt.serviceId?.name || '-'}
                         {apt.serviceId?.price && (
                           <span className="block text-xs" style={{ color: 'var(--color-rouge-600)' }}>
-                            {apt.serviceId.price}€
+                            {(apt.serviceId.price || 0).toLocaleString()} XOF
                           </span>
                         )}
                       </td>

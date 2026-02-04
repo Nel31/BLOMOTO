@@ -256,12 +256,12 @@ export default function AdminInvoicesPage() {
                     {invoice.clientId?.name || 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--color-noir-700)' }}>
-                    {invoice.total.toFixed(2)}€
+                    {invoice.total.toLocaleString()} XOF
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--color-noir-700)' }}>
-                    {invoice.paidAmount > 0 ? `${invoice.paidAmount.toFixed(2)}€` : '-'}
+                    {invoice.paidAmount > 0 ? `${invoice.paidAmount.toLocaleString()} XOF` : '-'}
                     {remaining > 0 && (
-                      <span className="text-xs text-red-600 ml-1">(Reste: {remaining.toFixed(2)}€)</span>
+                      <span className="text-xs text-red-600 ml-1">(Reste: {remaining.toLocaleString()} XOF)</span>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

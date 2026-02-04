@@ -447,7 +447,7 @@ export default function GarageDetailPage() {
                             {service.category}
                           </span>
                           <span className="text-lg font-bold" style={{ color: 'var(--color-rouge-600)' }}>
-                            {service.price}€
+                            {(service.price || 0).toLocaleString()} XOF
                           </span>
                         </div>
                       </div>

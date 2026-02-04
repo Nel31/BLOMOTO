@@ -247,7 +247,7 @@ export default function GarageQuotesPage() {
                     {quote.clientId.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--color-noir-700)' }}>
-                    {quote.total.toFixed(2)}€
+                    {quote.total.toLocaleString()} XOF
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
@@ -377,7 +377,7 @@ export default function GarageQuotesPage() {
                       step="0.01"
                     />
                     <span className="px-4 py-2" style={{ color: 'var(--color-noir-700)' }}>
-                      {(item.quantity * item.unitPrice).toFixed(2)}€
+                      {(item.quantity * item.unitPrice).toLocaleString()} XOF
                     </span>
                     {formData.items.length > 1 && (
                       <button

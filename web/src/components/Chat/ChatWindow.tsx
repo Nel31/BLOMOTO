@@ -518,7 +518,7 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
                         >
                           <div className="font-semibold">{quote.quoteNumber}</div>
                           <div className="text-xs" style={{ color: 'var(--color-noir-500)' }}>
-                            {quote.total.toFixed(2)}€ - {quote.status === 'sent' ? 'Envoyé' : quote.status === 'accepted' ? 'Accepté' : quote.status}
+                            {quote.total.toLocaleString()} XOF - {quote.status === 'sent' ? 'Envoyé' : quote.status === 'accepted' ? 'Accepté' : quote.status}
                           </div>
                         </button>
                       ))}
@@ -559,7 +559,7 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
                         >
                           <div className="font-semibold">{invoice.invoiceNumber}</div>
                           <div className="text-xs" style={{ color: 'var(--color-noir-500)' }}>
-                            {invoice.total.toFixed(2)}€ - {invoice.status}
+                            {invoice.total.toLocaleString()} XOF - {invoice.status}
                           </div>
                         </button>
                       ))}

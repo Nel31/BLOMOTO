@@ -320,7 +320,7 @@ export default function AppointmentsPage() {
                                 {apt.serviceId.name}
                               </span>
                               <span className="text-base font-bold" style={{ color: 'var(--color-rouge-600)' }}>
-                                {apt.serviceId.price}€
+                                {((apt.totalAmount ?? apt.serviceId.price) || 0).toLocaleString()} XOF
                               </span>
                             </div>
                             <span className="text-xs uppercase" style={{ color: 'var(--color-racine-600)' }}>
@@ -376,28 +376,44 @@ export default function AppointmentsPage() {
                             </button>
                           )}
                           {/* Bouton de paiement FedaPay pour les rendez-vous non payés */}
-                          {apt.paymentStatus !== 'paid' && apt.status !== 'cancelled' && apt.serviceId && (
-                            <div className="mt-2">
-                              <FedapayButton
-                                appointmentId={apt._id}
-                                amount={apt.serviceId.price || 0}
-                                currency="XOF"
-                                onSuccess={() => {
-                                  console.log('Paiement initié pour le rendez-vous:', apt._id);
-                                  // Recharger les rendez-vous après succès
-                                  setTimeout(() => {
-                                    loadAppointments();
-                                  }, 2000);
-                                }}
-                                onError={(error) => {
-                                  console.error('Erreur de paiement:', error);
-                                  // Ne pas afficher d'alert, l'erreur est déjà affichée par le composant
-                                }}
-                                buttonText={`💳 Payer ${(apt.serviceId.price || 0).toLocaleString()} XOF`}
-                                className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold transition-all duration-200 text-center shadow-md hover:shadow-xl hover:scale-105 active:scale-95"
-                              />
-                            </div>
-                          )}
+                          {(() => {
+                            const amount =
+                              (apt.totalAmount && apt.totalAmount > 0
+                                ? apt.totalAmount
+                                : apt.serviceId?.price || 0);
+
+                            if (
+                              apt.paymentStatus === 'paid' ||
+                              apt.status === 'cancelled' ||
+                              !apt.serviceId ||
+                              amount <= 0
+                            ) {
+                              return null;
+                            }
+
+                            return (
+                              <div className="mt-2">
+                                <FedapayButton
+                                  appointmentId={apt._id}
+                                  amount={amount}
+                                  currency="XOF"
+                                  onSuccess={() => {
+                                    console.log('Paiement initié pour le rendez-vous:', apt._id);
+                                    // Recharger les rendez-vous après succès
+                                    setTimeout(() => {
+                                      loadAppointments();
+                                    }, 2000);
+                                  }}
+                                  onError={(error) => {
+                                    console.error('Erreur de paiement:', error);
+                                    // Ne pas afficher d'alert, l'erreur est déjà affichée par le composant
+                                  }}
+                                  buttonText={`💳 Payer ${amount.toLocaleString()} XOF`}
+                                  className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold transition-all duration-200 text-center shadow-md hover:shadow-xl hover:scale-105 active:scale-95"
+                                />
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>

@@ -199,7 +199,7 @@ export default function AdminServicesPage() {
                       {getCategoryLabel(service.category)}
                     </td>
                     <td className="px-4 py-3 text-sm" style={{ color: 'var(--color-noir-600)' }}>
-                      {service.price ? `${service.price}€` : '-'}
+                      {service.price ? `${service.price.toLocaleString()} XOF` : '-'}
                     </td>
                     <td className="px-4 py-3">
                       <span

@@ -286,7 +286,7 @@ exports.sendInvoice = async (req, res) => {
         senderId: user._id,
         receiverId: invoice.clientId._id,
         appointmentId: invoice.appointmentId?._id || null,
-        content: `Facture ${invoice.invoiceNumber} - Montant total: ${invoice.total.toFixed(2)}€`,
+        content: `Facture ${invoice.invoiceNumber} - Montant total: ${invoice.total.toLocaleString('fr-FR')} XOF`,
         attachments: [invoice.pdfUrl],
       });
 
@@ -307,7 +307,7 @@ exports.sendInvoice = async (req, res) => {
           <p>Vous avez reçu une nouvelle facture de la part de ${invoice.garageId.name}.</p>
           <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>N° Facture:</strong> ${invoice.invoiceNumber}</p>
-            <p><strong>Montant total:</strong> ${invoice.total.toFixed(2)}€</p>
+            <p><strong>Montant total:</strong> ${invoice.total.toLocaleString('fr-FR')} XOF</p>
             <p><strong>Date d'échéance:</strong> ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}</p>
             ${invoice.quoteId ? `<p><strong>Référence devis:</strong> ${invoice.quoteId.quoteNumber}</p>` : ''}
           </div>
