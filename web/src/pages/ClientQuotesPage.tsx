@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuthStore } from "../store/auth";
+import FedapayButton from "../components/Payment/FedapayButton";
 
 interface QuoteItem {
   description: string;
@@ -42,10 +43,23 @@ interface Quote {
   createdAt: string;
 }
 
+interface Invoice {
+  _id: string;
+  invoiceNumber: string;
+  quoteId?: {
+    _id: string;
+    quoteNumber: string;
+  };
+  status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+  total: number;
+  paidAmount: number;
+}
+
 export default function ClientQuotesPage() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
@@ -64,8 +78,12 @@ export default function ClientQuotesPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.get("/quotes/client/me");
-      setQuotes(res.data.quotes || []);
+      const [quotesRes, invoicesRes] = await Promise.all([
+        api.get("/quotes/client/me"),
+        api.get("/invoices/client/me")
+      ]);
+      setQuotes(quotesRes.data.quotes || []);
+      setInvoices(invoicesRes.data.invoices || []);
     } catch (err: any) {
       setError(err.response?.data?.message || "Erreur lors du chargement");
     } finally {
@@ -133,6 +151,11 @@ export default function ClientQuotesPage() {
   const openDetailModal = (quote: Quote) => {
     setSelectedQuote(quote);
     setShowDetailModal(true);
+  };
+
+  // Trouver la facture associée à un devis
+  const getInvoiceForQuote = (quoteId: string): Invoice | null => {
+    return invoices.find(inv => inv.quoteId?._id === quoteId || inv.quoteId === quoteId) || null;
   };
 
   if (loading) {
@@ -221,7 +244,7 @@ export default function ClientQuotesPage() {
                           {new Date(quote.validUntil).toLocaleDateString('fr-FR')}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-wrap">
                             <button
                               onClick={() => openDetailModal(quote)}
                               className="text-[var(--color-racine-600)] hover:text-[var(--color-racine-700)] font-semibold"
@@ -246,6 +269,30 @@ export default function ClientQuotesPage() {
                                 </button>
                               </>
                             )}
+                            {quote.status === 'accepted' && (() => {
+                              const invoice = getInvoiceForQuote(quote._id);
+                              const amount = invoice ? (invoice.total - (invoice.paidAmount || 0)) : quote.total;
+                              if (invoice && invoice.status !== 'paid' && amount > 0) {
+                                return (
+                                  <div className="mt-1">
+                                    <FedapayButton
+                                      invoiceId={invoice._id}
+                                      amount={amount}
+                                      currency="XOF"
+                                      onSuccess={() => {
+                                        console.log('Paiement initié pour la facture:', invoice._id);
+                                        setTimeout(() => {
+                                          loadQuotes();
+                                        }, 2000);
+                                      }}
+                                      buttonText={`💳 Payer ${amount.toLocaleString()} XOF`}
+                                      className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-all duration-200 shadow-md hover:shadow-xl"
+                                    />
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })()}
                           </div>
                         </td>
                       </tr>
@@ -352,7 +399,7 @@ export default function ClientQuotesPage() {
                   </div>
                 )}
 
-                <div className="mt-6 flex gap-3">
+                <div className="mt-6 flex gap-3 flex-wrap">
                   {selectedQuote.pdfUrl && (
                     <a
                       href={selectedQuote.pdfUrl}
@@ -387,6 +434,36 @@ export default function ClientQuotesPage() {
                       </button>
                     </>
                   )}
+                  {selectedQuote.status === 'accepted' && (() => {
+                    const invoice = getInvoiceForQuote(selectedQuote._id);
+                    const amount = invoice ? (invoice.total - (invoice.paidAmount || 0)) : selectedQuote.total;
+                    if (invoice && invoice.status !== 'paid' && amount > 0) {
+                      return (
+                        <FedapayButton
+                          invoiceId={invoice._id}
+                          amount={amount}
+                          currency="XOF"
+                          onSuccess={() => {
+                            console.log('Paiement initié pour la facture:', invoice._id);
+                            setTimeout(() => {
+                              loadQuotes();
+                              setShowDetailModal(false);
+                            }, 2000);
+                          }}
+                          buttonText={`💳 Payer ${amount.toLocaleString()} XOF`}
+                          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                        />
+                      );
+                    }
+                    if (invoice && invoice.status === 'paid') {
+                      return (
+                        <span className="px-4 py-2 bg-green-100 text-green-700 font-semibold rounded-lg">
+                          ✅ Facture payée
+                        </span>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
             </div>

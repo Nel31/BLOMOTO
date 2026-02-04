@@ -489,7 +489,7 @@ export default function BookAppointmentPage() {
                     <div className="space-y-4">
                       <div className="p-4 bg-racine-50 rounded-lg">
                         <p className="text-sm mb-2" style={{ color: 'var(--color-noir-700)' }}>
-                          <strong>Montant à payer:</strong> {selectedServiceData.price} XOF
+                          <strong>Montant à payer:</strong> {selectedServiceData.price.toLocaleString()} XOF
                         </p>
                         <p className="text-xs" style={{ color: 'var(--color-noir-600)' }}>
                           Vous serez redirigé vers la page de paiement FedaPay
@@ -505,7 +505,7 @@ export default function BookAppointmentPage() {
                         onError={(error) => {
                           alert(`Erreur: ${error}`);
                         }}
-                        buttonText={`Payer ${selectedServiceData.price} XOF avec FedaPay`}
+                        buttonText={`Payer ${selectedServiceData.price.toLocaleString()} XOF avec FedaPay`}
                       />
                       <button
                         onClick={() => {
