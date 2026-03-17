@@ -1,10 +1,10 @@
-const User = require('../models/User');
-const generateToken = require('../utils/generateToken');
+import User from '../models/User.js';
+import generateToken from '../utils/generateToken.js';
 
 // @desc    Inscription d'un utilisateur
 // @route   POST /api/auth/register
 // @access  Public
-exports.register = async (req, res) => {
+export async function register(req, res) {
   try {
     const { name, email, password, phone } = req.body;
 
@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
       email,
       password,
       phone,
-      role: 'client', // l'inscription publique crée toujours un client
+      role: 'client'
     });
 
     // Générer le token
@@ -40,12 +40,12 @@ exports.register = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-};
+}
 
 // @desc    Connexion d'un utilisateur
 // @route   POST /api/auth/login
 // @access  Public
-exports.login = async (req, res) => {
+export async function login(req, res) {
   try {
     const { email, password } = req.body;
 
@@ -85,12 +85,12 @@ exports.login = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}
 
 // @desc    Obtenir l'utilisateur connecté
 // @route   GET /api/auth/me
 // @access  Private
-exports.getMe = async (req, res) => {
+export async function getMe(req, res) {
   try {
     const user = await User.findById(req.user._id);
 
@@ -109,5 +109,5 @@ exports.getMe = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}
 

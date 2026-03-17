@@ -39,15 +39,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connexion à MongoDB
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/promoto', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log('✅ Connexion à MongoDB réussie');
-  })
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("✅ MongoDB connecté"))
   .catch((err) => {
-    console.error('❌ Erreur de connexion à MongoDB:', err.message);
+    console.error("❌ Erreur MongoDB:", err.message);
     process.exit(1);
   });
 

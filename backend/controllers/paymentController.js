@@ -4,7 +4,7 @@ const Appointment = require('../models/Appointment');
 // @desc    Créer une intention de paiement
 // @route   POST /api/payments/create-intent
 // @access  Private/Client
-exports.createPaymentIntent = async (req, res) => {
+async function createPaymentIntent (req, res) {
   try {
     if (!stripe || !process.env.STRIPE_SECRET_KEY) {
       return res.status(500).json({ message: 'Paiement non configuré. Configurez STRIPE_SECRET_KEY dans votre .env' });
@@ -45,7 +45,7 @@ exports.createPaymentIntent = async (req, res) => {
 // @desc    Confirmer un paiement réussi
 // @route   POST /api/payments/confirm
 // @access  Private/Client
-exports.confirmPayment = async (req, res) => {
+async function confirmPayment(req, res) {
   try {
     if (!stripe || !process.env.STRIPE_SECRET_KEY) {
       return res.status(500).json({ message: 'Paiement non configuré' });
@@ -82,7 +82,7 @@ exports.confirmPayment = async (req, res) => {
 // @desc    Webhook Stripe pour les événements de paiement
 // @route   POST /api/payments/webhook
 // @access  Public (signé par Stripe)
-exports.stripeWebhook = async (req, res) => {
+async function stripeWebhook(req, res) {
   if (!stripe || !process.env.STRIPE_SECRET_KEY) {
     return res.status(500).json({ message: 'Stripe non configuré' });
   }
@@ -120,3 +120,9 @@ exports.stripeWebhook = async (req, res) => {
   res.json({ received: true });
 };
 
+
+module.exports = {
+  createPaymentIntent,
+  confirmPayment,
+  stripeWebhook
+};
