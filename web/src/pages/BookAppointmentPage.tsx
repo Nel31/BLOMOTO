@@ -3,8 +3,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuthStore } from "../store/auth";
 import ImageUpload from "../components/ImageUpload/ImageUpload";
-import PaymentForm from "../components/Payment/PaymentForm";
-import FedapayButton from "../components/Payment/FedapayButton";
 
 interface Garage {
   _id: string;
@@ -48,9 +46,6 @@ export default function BookAppointmentPage() {
   const [vehicleYear, setVehicleYear] = useState<string>("");
   const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>("");
   const [vehiclePhotos, setVehiclePhotos] = useState<string[]>([]);
-  const [showPayment, setShowPayment] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'fedapay'>('fedapay');
-  const [createdAppointment, setCreatedAppointment] = useState<any>(null);
 
   // Horaires disponibles (9h-18h, par créneaux de 30min)
   const timeSlots = [];
@@ -140,16 +135,11 @@ export default function BookAppointmentPage() {
       const res = await api.post("/appointments", appointmentData);
       const newAppointment = res.data.appointment;
 
-      // Si le service a un prix, proposer le paiement
-      if (selectedServiceData?.price && selectedServiceData.price > 0) {
-        setCreatedAppointment(newAppointment);
-        setShowPayment(true);
-      } else {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate("/app/appointments", { replace: true });
-        }, 2000);
-      }
+      // Le paiement se fera après acceptation du devis (dans Devis / Factures)
+      setSuccess(true);
+      setTimeout(() => {
+        navigate("/app/appointments", { replace: true });
+      }, 2000);
     } catch (err: any) {
       setError(err.response?.data?.message || "Erreur lors de la réservation");
     } finally {
@@ -433,94 +423,7 @@ export default function BookAppointmentPage() {
                 </div>
               </div>
 
-              {showPayment && createdAppointment && selectedServiceData?.price ? (
-                <div className="border-t pt-6" style={{ borderColor: 'var(--color-racine-200)' }}>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-noir-700)' }}>
-                      Méthode de paiement
-                    </label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="fedapay"
-                          checked={paymentMethod === 'fedapay'}
-                          onChange={(e) => setPaymentMethod(e.target.value as 'fedapay' | 'stripe')}
-                          className="w-4 h-4"
-                          style={{ accentColor: 'var(--color-racine-600)' }}
-                        />
-                        <span className="text-sm" style={{ color: 'var(--color-noir-700)' }}>FedaPay (Mobile Money)</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="stripe"
-                          checked={paymentMethod === 'stripe'}
-                          onChange={(e) => setPaymentMethod(e.target.value as 'fedapay' | 'stripe')}
-                          className="w-4 h-4"
-                          style={{ accentColor: 'var(--color-racine-600)' }}
-                        />
-                        <span className="text-sm" style={{ color: 'var(--color-noir-700)' }}>Stripe (Carte bancaire)</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {paymentMethod === 'stripe' ? (
-                    <PaymentForm
-                      appointmentId={createdAppointment._id}
-                      amount={selectedServiceData.price}
-                      onSuccess={() => {
-                        setSuccess(true);
-                        setTimeout(() => {
-                          navigate("/app/appointments", { replace: true });
-                        }, 2000);
-                      }}
-                      onCancel={() => {
-                        setShowPayment(false);
-                        setSuccess(true);
-                        setTimeout(() => {
-                          navigate("/app/appointments", { replace: true });
-                        }, 2000);
-                      }}
-                    />
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="p-4 bg-racine-50 rounded-lg">
-                        <p className="text-sm mb-2" style={{ color: 'var(--color-noir-700)' }}>
-                          <strong>Montant à payer:</strong> {selectedServiceData.price.toLocaleString()} XOF
-                        </p>
-                        <p className="text-xs" style={{ color: 'var(--color-noir-600)' }}>
-                          Vous serez redirigé vers la page de paiement FedaPay
-                        </p>
-                      </div>
-                      <FedapayButton
-                        appointmentId={createdAppointment._id}
-                        amount={selectedServiceData.price}
-                        currency="XOF"
-                        onSuccess={() => {
-                          console.log('Paiement FedaPay initié');
-                        }}
-                        onError={(error) => {
-                          alert(`Erreur: ${error}`);
-                        }}
-                        buttonText={`Payer ${selectedServiceData.price.toLocaleString()} XOF avec FedaPay`}
-                      />
-                      <button
-                        onClick={() => {
-                          setShowPayment(false);
-                        }}
-                        className="w-full px-4 py-2 border-2 rounded-lg text-sm font-semibold transition-all duration-200"
-                        style={{ borderColor: 'var(--color-racine-200)', color: 'var(--color-noir-700)' }}
-                      >
-                        Annuler
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t" style={{ borderColor: 'var(--color-racine-200)' }}>
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t" style={{ borderColor: 'var(--color-racine-200)' }}>
                   <button
                     type="submit"
                     disabled={submitting}
@@ -537,7 +440,6 @@ export default function BookAppointmentPage() {
                     Annuler
                   </button>
                 </div>
-              )}
             </form>
           )}
         </div>

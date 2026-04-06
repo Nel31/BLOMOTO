@@ -556,6 +556,37 @@ exports.getClientInvoices = async (req, res) => {
   }
 };
 
+// @desc    Choisir "paiement sur place" pour une facture (client)
+// @route   PUT /api/invoices/:id/pay-on-site
+// @access  Private (client)
+exports.payInvoiceOnSite = async (req, res) => {
+  try {
+    const user = req.user;
+    const { id } = req.params;
+
+    if (user.role !== 'client') {
+      return res.status(403).json({ message: 'Seuls les clients peuvent effectuer cette action' });
+    }
+
+    const invoice = await Invoice.findById(id);
+    if (!invoice) return res.status(404).json({ message: 'Facture non trouvée' });
+    if (invoice.clientId.toString() !== user._id.toString()) {
+      return res.status(403).json({ message: 'Non autorisé' });
+    }
+    if (invoice.status === 'paid') {
+      return res.status(400).json({ message: 'Facture déjà payée' });
+    }
+
+    invoice.paymentMethod = 'cash';
+    // On ne marque pas payé: c'est le garagiste qui confirmera à réception
+    await invoice.save();
+
+    return res.json({ success: true, invoice });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Obtenir toutes les factures (admin)
 // @route   GET /api/admin/invoices
 // @access  Private (admin)

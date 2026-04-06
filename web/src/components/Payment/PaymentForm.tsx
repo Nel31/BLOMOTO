@@ -13,13 +13,14 @@ const stripeKey = (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 interface PaymentFormProps {
-  appointmentId: string;
+  appointmentId?: string;
+  invoiceId?: string;
   amount: number;
   onSuccess: () => void;
   onCancel?: () => void;
 }
 
-function PaymentFormContent({ appointmentId, amount, onSuccess, onCancel }: PaymentFormProps) {
+function PaymentFormContent({ appointmentId, invoiceId, amount, onSuccess, onCancel }: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
@@ -32,6 +33,7 @@ function PaymentFormContent({ appointmentId, amount, onSuccess, onCancel }: Paym
       try {
         const res = await api.post('/payments/create-intent', {
           appointmentId,
+          invoiceId,
           amount,
         });
         setClientSecret(res.data.clientSecret);
@@ -41,7 +43,7 @@ function PaymentFormContent({ appointmentId, amount, onSuccess, onCancel }: Paym
     };
 
     createIntent();
-  }, [appointmentId, amount]);
+  }, [appointmentId, invoiceId, amount]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +81,7 @@ function PaymentFormContent({ appointmentId, amount, onSuccess, onCancel }: Paym
         await api.post('/payments/confirm', {
           paymentIntentId: paymentIntent.id,
           appointmentId,
+          invoiceId,
         });
 
         onSuccess();

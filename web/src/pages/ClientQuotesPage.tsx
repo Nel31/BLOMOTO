@@ -4,6 +4,7 @@ import { api } from "../api/client";
 import { useAuthStore } from "../store/auth";
 import FedapayButton from "../components/Payment/FedapayButton";
 import { formatCfa } from "../utils/money";
+import PaymentForm from "../components/Payment/PaymentForm";
 
 interface QuoteItem {
   description: string;
@@ -68,6 +69,9 @@ export default function ClientQuotesPage() {
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [processing, setProcessing] = useState<string | null>(null);
+  const [showPayModal, setShowPayModal] = useState(false);
+  const [payInvoiceId, setPayInvoiceId] = useState<string | null>(null);
+  const [payAmount, setPayAmount] = useState<number>(0);
 
   useEffect(() => {
     if (!user || user.role !== 'client') {
@@ -154,6 +158,12 @@ export default function ClientQuotesPage() {
   const openDetailModal = (quote: Quote) => {
     setSelectedQuote(quote);
     setShowDetailModal(true);
+  };
+
+  const openPayModal = (invoiceId: string, amount: number) => {
+    setPayInvoiceId(invoiceId);
+    setPayAmount(amount);
+    setShowPayModal(true);
   };
 
   // Trouver la facture associée à un devis
@@ -284,19 +294,42 @@ export default function ClientQuotesPage() {
                               if (invoice && invoice.status !== 'paid' && amount > 0) {
                                 return (
                                   <div className="mt-1">
-                                    <FedapayButton
-                                      invoiceId={invoice._id}
-                                      amount={amount}
-                                      currency="XOF"
-                                      onSuccess={() => {
-                                        console.log('Paiement initié pour la facture:', invoice._id);
-                                        setTimeout(() => {
-                                          loadQuotes();
-                                        }, 2000);
-                                      }}
-                                      buttonText={`💳 Payer ${formatCfa(amount)}`}
-                                      className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-all duration-200 shadow-md hover:shadow-xl"
-                                    />
+                                    <div className="flex gap-2 flex-wrap">
+                                      <FedapayButton
+                                        invoiceId={invoice._id}
+                                        amount={amount}
+                                        currency="XOF"
+                                        onSuccess={() => {
+                                          console.log('Paiement FedaPay initié pour la facture:', invoice._id);
+                                          setTimeout(() => loadQuotes(), 2000);
+                                        }}
+                                        buttonText={`FedaPay ${formatCfa(amount)}`}
+                                        className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-all duration-200 shadow-md hover:shadow-xl"
+                                      />
+
+                                      <button
+                                        onClick={() => openPayModal(invoice._id, amount)}
+                                        className="px-3 py-1.5 bg-[var(--color-racine-600)] hover:bg-[var(--color-racine-700)] text-white rounded-lg text-xs font-semibold transition-all duration-200 shadow-md hover:shadow-xl"
+                                      >
+                                        Carte bancaire
+                                      </button>
+
+                                      <button
+                                        onClick={async () => {
+                                          try {
+                                            await api.put(`/invoices/${invoice._id}/pay-on-site`);
+                                            alert("Paiement sur place sélectionné. Vous pourrez régler au garage.");
+                                            loadQuotes();
+                                          } catch (err: any) {
+                                            alert(err.response?.data?.message || "Erreur");
+                                          }
+                                        }}
+                                        className="px-3 py-1.5 bg-[var(--color-noir-200)] hover:bg-[var(--color-noir-300)] rounded-lg text-xs font-semibold transition-all duration-200"
+                                        style={{ color: 'var(--color-noir-700)' }}
+                                      >
+                                        Sur place
+                                      </button>
+                                    </div>
                                   </div>
                                 );
                               }
@@ -474,6 +507,43 @@ export default function ClientQuotesPage() {
                     return null;
                   })()}
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Paiement carte (Stripe) */}
+        {showPayModal && payInvoiceId && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowPayModal(false)}>
+            <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full flex flex-col" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 border-b" style={{ borderColor: 'var(--color-racine-200)' }}>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold" style={{ color: 'var(--color-noir)' }}>
+                    Paiement par carte
+                  </h3>
+                  <button
+                    onClick={() => setShowPayModal(false)}
+                    className="text-2xl hover:opacity-70"
+                    style={{ color: 'var(--color-noir-600)' }}
+                  >
+                    ×
+                  </button>
+                </div>
+                <p className="text-sm mt-2" style={{ color: 'var(--color-noir-600)' }}>
+                  Montant: <strong>{formatCfa(payAmount)}</strong>
+                </p>
+              </div>
+              <div className="p-6">
+                <PaymentForm
+                  invoiceId={payInvoiceId}
+                  amount={payAmount}
+                  onSuccess={() => {
+                    setShowPayModal(false);
+                    loadQuotes();
+                    alert("Paiement effectué avec succès");
+                  }}
+                  onCancel={() => setShowPayModal(false)}
+                />
               </div>
             </div>
           </div>

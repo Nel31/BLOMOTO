@@ -1,5 +1,6 @@
 const stripe = process.env.STRIPE_SECRET_KEY ? require('stripe')(process.env.STRIPE_SECRET_KEY) : null;
 const Appointment = require('../models/Appointment');
+const Invoice = require('../models/Invoice');
 
 // @desc    Créer une intention de paiement
 // @route   POST /api/payments/create-intent
@@ -10,24 +11,41 @@ async function createPaymentIntent (req, res) {
       return res.status(500).json({ message: 'Paiement non configuré. Configurez STRIPE_SECRET_KEY dans votre .env' });
     }
 
-    const { appointmentId, amount } = req.body;
+    const { appointmentId, invoiceId, amount } = req.body;
 
-    // Vérifier que le rendez-vous appartient au client
-    const appointment = await Appointment.findById(appointmentId);
-    if (!appointment) {
-      return res.status(404).json({ message: 'Rendez-vous non trouvé' });
+    if (!appointmentId && !invoiceId) {
+      return res.status(400).json({ message: 'appointmentId ou invoiceId requis' });
     }
 
-    if (appointment.clientId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Non autorisé' });
+    // Vérifier que la ressource appartient au client
+    let appointment = null;
+    let invoice = null;
+
+    if (invoiceId) {
+      invoice = await Invoice.findById(invoiceId);
+      if (!invoice) return res.status(404).json({ message: 'Facture non trouvée' });
+      if (invoice.clientId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Non autorisé' });
+      }
+      if (invoice.status === 'paid') {
+        return res.status(400).json({ message: 'Facture déjà payée' });
+      }
+    } else {
+      appointment = await Appointment.findById(appointmentId);
+      if (!appointment) return res.status(404).json({ message: 'Rendez-vous non trouvé' });
+      if (appointment.clientId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Non autorisé' });
+      }
     }
 
     // Créer l'intention de paiement Stripe
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convertir en centimes
-      currency: 'eur',
+      // XOF est une devise sans décimales: amount doit être un entier
+      amount: Math.round(amount),
+      currency: 'xof',
       metadata: {
-        appointmentId: appointmentId.toString(),
+        ...(appointmentId ? { appointmentId: appointmentId.toString() } : {}),
+        ...(invoiceId ? { invoiceId: invoiceId.toString() } : {}),
         userId: req.user._id.toString(),
       },
     });
@@ -51,7 +69,10 @@ async function confirmPayment(req, res) {
       return res.status(500).json({ message: 'Paiement non configuré' });
     }
 
-    const { paymentIntentId, appointmentId } = req.body;
+    const { paymentIntentId, appointmentId, invoiceId } = req.body;
+    if (!appointmentId && !invoiceId) {
+      return res.status(400).json({ message: 'appointmentId ou invoiceId requis' });
+    }
 
     // Vérifier le paiement avec Stripe
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
@@ -60,20 +81,37 @@ async function confirmPayment(req, res) {
       return res.status(400).json({ message: 'Paiement non réussi' });
     }
 
-    // Mettre à jour le rendez-vous avec le statut de paiement
+    if (invoiceId) {
+      const invoice = await Invoice.findById(invoiceId);
+      if (!invoice) return res.status(404).json({ message: 'Facture non trouvée' });
+      if (invoice.clientId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Non autorisé' });
+      }
+
+      invoice.status = 'paid';
+      invoice.paidAmount = invoice.total;
+      invoice.paidAt = new Date();
+      invoice.paymentMethod = 'card';
+      await invoice.save();
+
+      // Si lié à un rendez-vous, le marquer payé aussi
+      if (invoice.appointmentId) {
+        await Appointment.findByIdAndUpdate(invoice.appointmentId, {
+          paymentStatus: 'paid',
+          paymentIntentId: paymentIntentId,
+        });
+      }
+
+      return res.json({ success: true, invoice });
+    }
+
     const appointment = await Appointment.findByIdAndUpdate(
       appointmentId,
-      {
-        paymentStatus: 'paid',
-        paymentIntentId: paymentIntentId,
-      },
+      { paymentStatus: 'paid', paymentIntentId: paymentIntentId },
       { new: true }
     );
 
-    res.json({
-      success: true,
-      appointment,
-    });
+    return res.json({ success: true, appointment });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -108,12 +146,31 @@ async function stripeWebhook(req, res) {
   if (event.type === 'payment_intent.succeeded') {
     const paymentIntent = event.data.object;
     const appointmentId = paymentIntent.metadata.appointmentId;
+    const invoiceId = paymentIntent.metadata.invoiceId;
 
     if (appointmentId) {
       await Appointment.findByIdAndUpdate(appointmentId, {
         paymentStatus: 'paid',
         paymentIntentId: paymentIntent.id,
       });
+    }
+
+    if (invoiceId) {
+      const invoice = await Invoice.findById(invoiceId);
+      if (invoice && invoice.status !== 'paid') {
+        invoice.status = 'paid';
+        invoice.paidAmount = invoice.total;
+        invoice.paidAt = new Date();
+        invoice.paymentMethod = 'card';
+        await invoice.save();
+
+        if (invoice.appointmentId) {
+          await Appointment.findByIdAndUpdate(invoice.appointmentId, {
+            paymentStatus: 'paid',
+            paymentIntentId: paymentIntent.id,
+          });
+        }
+      }
     }
   }
 

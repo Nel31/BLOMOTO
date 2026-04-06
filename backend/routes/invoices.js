@@ -9,6 +9,7 @@ const {
   getInvoice,
   updateInvoice,
   markInvoiceAsPaid,
+  payInvoiceOnSite,
 } = require('../controllers/invoiceController');
 const { protect } = require('../middleware/auth');
 
@@ -26,6 +27,7 @@ router.post('/:id/send', sendInvoice);
 
 // Routes pour les clients
 router.get('/client/me', getClientInvoices);
+router.put('/:id/pay-on-site', payInvoiceOnSite);
 
 module.exports = router;
 
