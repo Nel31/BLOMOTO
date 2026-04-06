@@ -424,10 +424,9 @@ exports.generateInvoicePDF = async (invoice, garage, client) => {
 
 // Fonctions utilitaires
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(amount);
+  const n = Number(amount) || 0;
+  // Pas de séparateurs de milliers: "60000 CFA"
+  return `${Math.round(n)} CFA`;
 }
 
 function getStatusLabel(status) {

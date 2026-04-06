@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
+import { formatCfa } from "../utils/money";
 
 interface InvoiceItem {
   description: string;
@@ -256,12 +257,12 @@ export default function AdminInvoicesPage() {
                     {invoice.clientId?.name || 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--color-noir-700)' }}>
-                    {invoice.total.toLocaleString()} XOF
+                    {formatCfa(invoice.total)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--color-noir-700)' }}>
-                    {invoice.paidAmount > 0 ? `${invoice.paidAmount.toLocaleString()} XOF` : '-'}
+                    {invoice.paidAmount > 0 ? formatCfa(invoice.paidAmount) : '-'}
                     {remaining > 0 && (
-                      <span className="text-xs text-red-600 ml-1">(Reste: {remaining.toLocaleString()} XOF)</span>
+                      <span className="text-xs text-red-600 ml-1">(Reste: {formatCfa(remaining)})</span>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

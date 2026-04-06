@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
+import { formatCfa } from "../utils/money";
 
 interface InvoiceItem {
   description: string;
@@ -302,10 +303,10 @@ export default function GarageInvoicesPage() {
                     {invoice.clientId.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--color-noir-700)' }}>
-                    {invoice.total.toLocaleString()} XOF
+                    {formatCfa(invoice.total)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--color-noir-700)' }}>
-                    {invoice.paidAmount > 0 ? `${invoice.paidAmount.toLocaleString()} XOF` : '-'}
+                    {invoice.paidAmount > 0 ? formatCfa(invoice.paidAmount) : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
@@ -368,7 +369,7 @@ export default function GarageInvoicesPage() {
                       onClick={() => handleCreateFromQuote(quote._id)}
                       className="block w-full text-left px-4 py-2 bg-white rounded border hover:bg-gray-50"
                     >
-                      <span className="font-medium">{quote.quoteNumber}</span> - {quote.clientId.name} - {quote.total.toLocaleString()} XOF
+                      <span className="font-medium">{quote.quoteNumber}</span> - {quote.clientId.name} - {formatCfa(quote.total)}
                     </button>
                   ))}
                 </div>
@@ -446,7 +447,7 @@ export default function GarageInvoicesPage() {
                       step="0.01"
                     />
                     <span className="px-4 py-2" style={{ color: 'var(--color-noir-700)' }}>
-                      {(item.quantity * item.unitPrice).toLocaleString()} XOF
+                      {formatCfa(item.quantity * item.unitPrice)}
                     </span>
                     {formData.items.length > 1 && (
                       <button
@@ -585,7 +586,7 @@ export default function GarageInvoicesPage() {
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--color-noir)' }}>Marquer comme payée</h2>
             <p className="mb-4" style={{ color: 'var(--color-noir-700)' }}>
-              Facture {selectedInvoice.invoiceNumber} - Montant total: {selectedInvoice.total.toLocaleString()} XOF
+              Facture {selectedInvoice.invoiceNumber} - Montant total: {formatCfa(selectedInvoice.total)}
             </p>
             <div className="space-y-4">
               <div>

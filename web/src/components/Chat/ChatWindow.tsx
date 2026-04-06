@@ -70,7 +70,7 @@ export default function ChatWindow({ userId, appointmentId, onClose }: ChatWindo
   const setupSocket = () => {
     socketService.connect();
     const currentUserId = currentUser?._id || currentUser?.id;
-    const roomId = `conversation-${currentUserId}-${userId}`;
+    const roomId = `conversation-${[String(currentUserId), String(userId)].sort().join('-')}`;
     socketService.joinRoom(roomId);
 
     socketService.onMessage((data: any) => {

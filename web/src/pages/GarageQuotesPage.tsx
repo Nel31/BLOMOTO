@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
+import { formatCfa } from "../utils/money";
 
 interface QuoteItem {
   description: string;
@@ -247,7 +248,7 @@ export default function GarageQuotesPage() {
                     {quote.clientId.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--color-noir-700)' }}>
-                    {quote.total.toLocaleString()} XOF
+                    {formatCfa(quote.total)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
@@ -377,7 +378,7 @@ export default function GarageQuotesPage() {
                       step="0.01"
                     />
                     <span className="px-4 py-2" style={{ color: 'var(--color-noir-700)' }}>
-                      {(item.quantity * item.unitPrice).toLocaleString()} XOF
+                      {formatCfa(item.quantity * item.unitPrice)}
                     </span>
                     {formData.items.length > 1 && (
                       <button

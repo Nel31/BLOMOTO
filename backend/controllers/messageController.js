@@ -1,13 +1,82 @@
 const Message = require('../models/Message');
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
+const Garage = require('../models/Garage');
+
+const getConversationRoomId = (userIdA, userIdB) => {
+  const a = String(userIdA);
+  const b = String(userIdB);
+  return `conversation-${[a, b].sort().join('-')}`;
+};
 
 // Helper pour envoyer via Socket.io
 const broadcastMessage = (req, message) => {
   const io = req.app.get('io');
   if (io) {
-    const roomId = `conversation-${message.senderId}-${message.receiverId}`;
-    io.to(roomId).emit('new-message', message);
+    const roomId = getConversationRoomId(message.senderId?._id || message.senderId, message.receiverId?._id || message.receiverId);
+    io.to(roomId).emit('new-message', { message });
+  }
+};
+
+// @desc    Obtenir la liste de contacts autorisés pour initier une conversation
+// @route   GET /api/messages/contacts
+// @access  Private
+exports.getContacts = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const role = req.user.role;
+
+    // Admin: peut écrire à tout le monde (sauf lui-même)
+    if (role === 'admin') {
+      const users = await User.find({ _id: { $ne: userId } }).select('name email avatar role');
+      return res.json({ success: true, count: users.length, users });
+    }
+
+    // Toujours inclure les admins comme contact
+    const admins = await User.find({ role: 'admin', isActive: true }).select('name email avatar role');
+
+    // Client: admins + garagistes liés à ses rendez-vous
+    if (role === 'client') {
+      const appointments = await Appointment.find({ clientId: userId }).select('garageId');
+      const garageIds = [...new Set(appointments.map((a) => String(a.garageId)))];
+      const garages = garageIds.length
+        ? await Garage.find({ _id: { $in: garageIds } }).select('ownerId')
+        : [];
+      const ownerIds = [...new Set(garages.map((g) => String(g.ownerId)))];
+      const garagistes = ownerIds.length
+        ? await User.find({ _id: { $in: ownerIds }, isActive: true }).select('name email avatar role')
+        : [];
+
+      const map = new Map();
+      [...admins, ...garagistes].forEach((u) => map.set(String(u._id), u));
+      const users = [...map.values()];
+      return res.json({ success: true, count: users.length, users });
+    }
+
+    // Garagiste: admins + clients liés à son garage
+    if (role === 'garagiste') {
+      const garageId = req.user.garageId;
+      if (!garageId) {
+        const map = new Map();
+        admins.forEach((u) => map.set(String(u._id), u));
+        return res.json({ success: true, count: map.size, users: [...map.values()] });
+      }
+
+      const appointments = await Appointment.find({ garageId }).select('clientId');
+      const clientIds = [...new Set(appointments.map((a) => String(a.clientId)))];
+      const clients = clientIds.length
+        ? await User.find({ _id: { $in: clientIds }, isActive: true }).select('name email avatar role')
+        : [];
+
+      const map = new Map();
+      [...admins, ...clients].forEach((u) => map.set(String(u._id), u));
+      const users = [...map.values()];
+      return res.json({ success: true, count: users.length, users });
+    }
+
+    return res.json({ success: true, count: admins.length, users: admins });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };
 

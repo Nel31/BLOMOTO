@@ -1,10 +1,10 @@
-import User from '../models/User.js';
-import generateToken from '../utils/generateToken.js';
+const User = require("../models/User");
+const generateToken = require("../utils/generateToken");
 
 // @desc    Inscription d'un utilisateur
 // @route   POST /api/auth/register
 // @access  Public
-export async function register(req, res) {
+exports.register = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
 
@@ -21,7 +21,7 @@ export async function register(req, res) {
       email,
       password,
       phone,
-      role: 'client'
+      role: "client",
     });
 
     // Générer le token
@@ -40,32 +40,32 @@ export async function register(req, res) {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-}
+};
 
 // @desc    Connexion d'un utilisateur
 // @route   POST /api/auth/login
 // @access  Public
-export async function login(req, res) {
+exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     // Vérifier l'email et le mot de passe
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
+      return res.status(401).json({ message: "Email ou mot de passe incorrect" });
     }
 
     // Vérifier le mot de passe
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
+      return res.status(401).json({ message: "Email ou mot de passe incorrect" });
     }
 
     // Vérifier si le compte est actif
     if (!user.isActive) {
-      return res.status(401).json({ message: 'Compte désactivé' });
+      return res.status(401).json({ message: "Compte désactivé" });
     }
 
     // Générer le token
@@ -85,12 +85,12 @@ export async function login(req, res) {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 // @desc    Obtenir l'utilisateur connecté
 // @route   GET /api/auth/me
 // @access  Private
-export async function getMe(req, res) {
+exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -109,5 +109,5 @@ export async function getMe(req, res) {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
