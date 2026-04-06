@@ -20,14 +20,16 @@ router.use(protect);
 router.post('/', createInvoice);
 router.post('/from-quote/:quoteId', createInvoiceFromQuote);
 router.get('/garage/me', getGarageInvoices);
-router.get('/:id', getInvoice);
-router.put('/:id', updateInvoice);
-router.put('/:id/mark-paid', markInvoiceAsPaid);
-router.post('/:id/send', sendInvoice);
 
 // Routes pour les clients
 router.get('/client/me', getClientInvoices);
 router.put('/:id/pay-on-site', payInvoiceOnSite);
+
+// Routes par ID (doivent être après les routes spécifiques)
+router.get('/:id', getInvoice);
+router.put('/:id', updateInvoice);
+router.put('/:id/mark-paid', markInvoiceAsPaid);
+router.post('/:id/send', sendInvoice);
 
 module.exports = router;
 
